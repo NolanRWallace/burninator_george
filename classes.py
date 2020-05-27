@@ -1,26 +1,36 @@
 import pygame 
 
-walkRight = pygame.image.load('hero_right.png')
-walkLeft = pygame.image.load('hero_left.png')
-walkUp = pygame.image.load('hero_back.png')
-walkDown = pygame.image.load('hero_front.png')
-fireball = pygame.image.load('fireball.gif')
-# pygame.transform.scale(fireball, (10,10))
-# georgewalkup = pygame.image.load('burnwalkup1.png', 'burnstdup.png', 'burnwalkup2.png')
+walkRight = [pygame.image.load('hero/hero_right.png'), pygame.image.load('hero/hero_right_walk1.png'), pygame.image.load('hero/hero_right_walk2.png')]
+walkLeft = [pygame.image.load('hero/hero_left.png'), pygame.image.load('hero/hero_left_walk1.png'), pygame.image.load('hero/hero_left_walk2.png')]
+walkUp = [pygame.image.load('hero/hero_back.png'), pygame.image.load('hero/hero_back_walk1.png'), pygame.image.load('hero/hero_back_walk2.png')]
+walkDown = [pygame.image.load('hero/hero_front.png'), pygame.image.load('hero/hero_front_walk1.png'), pygame.image.load('hero/hero_front_walk2.png')]
+swordRight = [pygame.image.load('hero/sword_idle_right.png'), pygame.image.load('hero/sword_right_walk1.png'), pygame.image.load('hero/sword_right_walk2.png')]
+swordLeft = [pygame.image.load('hero/sword_idle_left.png'), pygame.image.load('hero/sword_left_walk1.png'), pygame.image.load('hero/sword_left_walk2.png')]
+swordUp = [pygame.image.load('hero/sword_idle_back.png'), pygame.image.load('hero/sword_back_walk1.png'), pygame.image.load('hero/sword_back_walk2.png')]
+swordDown = [pygame.image.load('hero/sword_idle_front.png'), pygame.image.load('hero/sword_front_walk1.png'), pygame.image.load('hero/sword_front_walk2.png')]
+swordAttackRight = [pygame.transform.scale(pygame.image.load('hero/sword_right_attack1.png'), (32,32)), pygame.transform.scale(pygame.image.load('hero/sword_right_attack2.png'), (32,32))]
+swordAttackLeft = [pygame.transform.scale(pygame.image.load('hero/sword_left_attack1.png'), (32,32)), pygame.transform.scale(pygame.image.load('hero/sword_left_attack2.png'), (32,32))]
+swordAttackUp = [pygame.transform.scale(pygame.image.load('hero/sword_back_attack1.png'), (32,32)), pygame.transform.scale(pygame.image.load('hero/sword_back_attack2.png'), (32,32))]
+swordAttackDown = [pygame.transform.scale(pygame.image.load('hero/sword_front_attack1.png'), (32,32)), pygame.transform.scale(pygame.image.load('hero/sword_front_attack2.png'), (32,32))]
+magicAttackRight = pygame.image.load('hero/magic_right_attack.png')
+magicAttackLeft = pygame.image.load('hero/magic_left_attack.png')
+magicAttackUp = pygame.image.load('hero/magic_back_attack.png')
+magicAttackDown = pygame.image.load('hero/magic_front_attack.png')
 
 georgestanding = {
-    'stdup' : pygame.image.load('burnstdup.png'),
-    'stdright' : pygame.image.load('burnstdright.png'),
-    'stddown' : pygame.image.load('burnstddown.png'),
-    'stdleft' : pygame.image.load('burnstdleft.png'),
+    'stdup' : pygame.image.load('george/burnstdup.png'),
+    'stdright' : pygame.image.load('george/burnstdright.png'),
+    'stddown' : pygame.image.load('george/burnstddown.png'),
+    'stdleft' : pygame.image.load('george/burnstdleft.png'),
 }
 georgewalking = {
-    'walkup' : [pygame.image.load('burnwalkup1.png'), pygame.image.load('burnstdup.png'), pygame.image.load('burnwalkup2.png')],
-    'walkright' : [pygame.image.load('burnwalkright1.png'), pygame.image.load('burnstdright.png'), pygame.image.load('burnwalkright2.png')],
-    'walkdown' : [pygame.image.load('burnwalkdown1.png'), pygame.image.load('burnstddown.png'), pygame.image.load('burnwalkdown2.png',)],
-    'walkleft' : [pygame.image.load('burnwalkleft1.png'), pygame.image.load('burnstdleft.png'), pygame.image.load('burnwalkleft2.png')],
+    'walkup' : [pygame.image.load('george/burnwalkup1.png'), pygame.image.load('george/burnstdup.png'), pygame.image.load('george/burnwalkup2.png')],
+    'walkright' : [pygame.image.load('george/burnwalkright1.png'), pygame.image.load('george/burnstdright.png'), pygame.image.load('george/burnwalkright2.png')],
+    'walkdown' : [pygame.image.load('george/burnwalkdown1.png'), pygame.image.load('george/burnstddown.png'), pygame.image.load('george/burnwalkdown2.png',)],
+    'walkleft' : [pygame.image.load('george/burnwalkleft1.png'), pygame.image.load('george/burnstdleft.png'), pygame.image.load('george/burnwalkleft2.png')],
 }
 
+char = pygame.image.load('hero/hero_front.png')
 
 
 class Player(object):
@@ -36,41 +46,91 @@ class Player(object):
         self.down = False
         self.walkCount = 0
         self.standing = True
+        self.equip = False
+        self.swordAttack = False
+        self.swordSlashCount = 0
+        self.magicAttack = False
         self.hitbox = (self.x, self.y, 20, 25)
     
     def draw(self, win):
-        if self.walkCount + 1 >= 24:
+        if self.walkCount + 1 >= 9:
             self.walkCount = 0
-
-        if not(self.standing):
+        
+        if self.equip == True and self.swordAttack == False:
             if self.left:
-                win.blit(walkLeft, (self.x,self.y))
+                win.blit(swordLeft[self.walkCount//3], (self.x,self.y))
                 self.walkCount += 1
+                
             elif self.right:
-                win.blit(walkRight, (self.x,self.y))
+                win.blit(swordRight[self.walkCount//3], (self.x,self.y))
                 self.walkCount += 1
+                
             elif self.up:
-                win.blit(walkUp, (self.x,self.y))
+                win.blit(swordUp[self.walkCount//3], (self.x,self.y))
                 self.walkCount += 1
+                
             elif self.down:
-                win.blit(walkDown, (self.x,self.y))
+                win.blit(swordDown[self.walkCount//3], (self.x,self.y))
                 self.walkCount += 1
-        else:
+        
+        if not(self.standing) and self.equip == False and self.swordAttack == False and self.magicAttack == False:
             if self.left:
-                win.blit(walkLeft, (self.x,self.y))
+                win.blit(walkLeft[self.walkCount//3], (self.x,self.y))
+                self.walkCount += 1
+                
+            if self.right:
+                win.blit(walkRight[self.walkCount//3], (self.x,self.y))
+                self.walkCount += 1
+                
+            if self.up:
+                win.blit(walkUp[self.walkCount//3], (self.x,self.y))
+                self.walkCount += 1
+                
+            if self.down:
+                win.blit(walkDown[self.walkCount//3], (self.x,self.y))
+                self.walkCount += 1
+                
+        if self.standing and self.equip == False and self.swordAttack == False and self.magicAttack == False:
+            if self.left:
+                win.blit(walkLeft[0], (self.x,self.y))
             elif self.right:
-                win.blit(walkRight, (self.x,self.y))
+                win.blit(walkRight[0], (self.x,self.y))
             elif self.up:
-                win.blit(walkUp, (self.x,self.y))
+                win.blit(walkUp[0], (self.x,self.y))
             else: 
                 self.down
-                win.blit(walkDown, (self.x,self.y))
+                win.blit(char, (self.x,self.y))
+        
+        if self.swordSlashCount + 1 >= 6:
+            self.swordSlashCount = 0
+
+        if self.swordAttack == True:
+            if self.left:
+                win.blit(swordAttackLeft[self.swordSlashCount//3], (self.x, self.y))
+                self.swordSlashCount += 1
+            elif self.right:
+                win.blit(swordAttackRight[self.swordSlashCount//3], (self.x, self.y))
+                self.swordSlashCount += 1
+            elif self.up:
+                win.blit(swordAttackUp[self.swordSlashCount//3], (self.x, self.y))
+                self.swordSlashCount += 1
+            elif self.down:
+                win.blit(swordAttackDown[self.swordSlashCount//3], (self.x, self.y))
+                self.swordSlashCount += 1
+            
+        if self. magicAttack == True and self.swordAttack == False:
+            if self.left:
+                win.blit(magicAttackLeft, (self.x, self.y))
+            if self.right:
+                win.blit(magicAttackRight, (self.x, self.y))
+            if self.up:
+                win.blit(magicAttackUp, (self.x, self.y))
+            if self.down:
+                win.blit(magicAttackDown, (self.x, self.y))
                 
-        self.hitbox = (self.x-2, self.y-2, 24, 28)
+        self.hitbox = (self.x, self.y, 20, 25)
         pygame.draw.rect(win, (255,0,0), self.hitbox,2)
         
-        def hit():
-            pass
 
 # ----end of player class-----
 

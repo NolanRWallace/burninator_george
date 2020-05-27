@@ -5,17 +5,20 @@ pygame.init()
 
 # -----Sounds files imported----
 
-# pygame.mixer.music.load('trogdor_short.mp3')
+# pygame.mixer.music.load('music/trogdor_short.mp3')
 # pygame.mixer.music.play(-1)
-fireball_sound = pygame.mixer.Sound('Fireball.wav')
+fireball_sound = pygame.mixer.Sound('music/Fireball.wav')
 fireball_sound.set_volume(.05)
-# sword_swing = pygame.mixer.Sound('sword_swing.wav')
-# sword_hit = pygame.mixer.Sound('sword_hit.wav')
-# pygame.mixer.Sound.play(sword_swing)
+sword_swing = pygame.mixer.Sound('music/sword_swing.wav')
+sword_hit = pygame.mixer.Sound('music/sword_hit.wav')
+
 
 win = pygame.display.set_mode((500,500))
 
 pygame.display.set_caption("Burninator George!!!")
+char = pygame.image.load('hero/hero_front.png')
+
+
 # ----Backgroudn img loading ------
 bg = pygame.image.load('grassbg.png')
 
@@ -44,21 +47,34 @@ i=0
 j=0
 direction = 'down'
 boss_direction = 'down'
+fireballCoolDown = 0
 
 #----game operations loop -----
+
 while run:
-    clock.tick(27)
+    clock.tick(30)
+
+    #-----hero fireball firerate limit -----
+    
+    if fireballCoolDown > 0:
+        fireballCoolDown += 1
+    if fireballCoolDown > 5:
+        fireballCoolDown = 0
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        
+            
+    #----hero fireballs -----
+    
     for fireball in fireballs:
             if fireball.x < 500 and fireball.x > 0 and fireball.y < 500 and fireball.y > 0:
                 fireball.fire()
             else:
                 fireballs.remove(fireball)
                 
+    #----boss fireballs------
+    
     for boss_fireball in boss_fireballs:
         if boss_fireball.x < 500 and boss_fireball.x > 0 and boss_fireball.y < 500 and boss_fireball.y > 0:
             boss_fireball.fire()
@@ -69,7 +85,7 @@ while run:
     
     # ---fireball action key----
     
-    if keys[pygame.K_SPACE]:
+    if keys[pygame.K_SPACE] and fireballCoolDown == 0:
         if hero.left:
             direction = 'left'
         if hero.right:
@@ -79,10 +95,27 @@ while run:
         if hero.down:
             direction = 'down'
         
-        if len(fireballs) < 100:
+        if len(fireballs) < 5 and hero.equip == False:
             pygame.mixer.Sound.play(fireball_sound)
             fireballs.append(Projectile(round(hero.x + hero.width //2), round(hero.y + hero.height //2), (255,0,0), 5, direction))
+        fireballCoolDown = 1
+    else:
+        hero.magicAttack = False
+        
+    #-----weapon switching------
+        
+    if keys[pygame.K_q]:
+        hero.equip = True
+    if keys[pygame.K_e]:
+        hero.equip = False
     
+    if hero.equip == True:
+        if keys[pygame.K_SPACE]:
+            hero.swordAttack = True
+        else:
+            hero.swordAttack = False
+        
+        
     #-----character movement-----
     
     if keys[pygame.K_LEFT] and hero.x > hero.vel:
