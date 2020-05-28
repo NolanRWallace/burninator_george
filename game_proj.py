@@ -49,10 +49,51 @@ direction = 'down'
 boss_direction = 'down'
 fireballCoolDown = 0
 
+# inpath1 = boss.hitbox[1]+boss.hitbox[3] > hero.hitbox[1] 
+# inpath2 = hero.hitbox[1] + hero.hitbox[3] >= boss.hitbox[1]
+#     # inpath = True
+# # else:
+# #     inpath = False
+# left = boss.hitbox[0]+boss.hitbox[2] >= hero.hitbox[0]
+def check_for_boss(face_boss, boss_box_perp1, boss_box_perp2):
+    if face_boss and boss_box_perp1 and boss_box_perp2 == True:
+        return True
+    else:
+        return False
+    
+def check_if_past(boss_past):
+    if boss_past == True:
+        return True
+
 #----game operations loop -----
 
 while run:
     clock.tick(30)
+    
+    #----y boss hitbox ranges-----
+    x_inpath1 = boss.hitbox[1] + boss.hitbox[3] > hero.hitbox[1]
+    x_inpath2 = hero.hitbox[1] + hero.hitbox[3] > boss.hitbox[1]
+    
+    #------x boss hitbox ranges-----
+    y_inpath1 = boss.hitbox[0]+boss.hitbox[2] > hero.hitbox[0]
+    y_inpath2 = hero.hitbox[2] + hero.hitbox[0] > boss.hitbox[0]
+    
+    #----direction up collision----
+    up = boss.hitbox[1] + boss.hitbox[3] + hero.vel > hero.hitbox[1]
+    past_down = hero.hitbox[1] + hero.hitbox[3] < boss.hitbox[1]
+    
+    #----direction down collision----
+    past_up = boss.hitbox[1] + boss.hitbox[3] < hero.hitbox[1]
+    down = hero.hitbox[1] + hero.hitbox[3] + hero.vel> boss.hitbox[1] 
+    
+    #----direction left collision----
+    left = boss.hitbox[0] + boss.hitbox[2] > hero.hitbox[0] -hero.vel
+    past_left = hero.hitbox[0] + hero.hitbox[2] -hero.vel < boss.hitbox[0]
+    
+    #----direction right collision----
+    right = hero.hitbox[0] + hero.hitbox[2] + hero.vel > boss.hitbox[0]
+    past_right = boss.hitbox[0] + boss.hitbox[2] < hero.hitbox[0]
+
 
     #-----hero fireball firerate limit -----
     
@@ -86,6 +127,7 @@ while run:
     # ---fireball action key----
     
     if keys[pygame.K_SPACE] and fireballCoolDown == 0:
+        hero.magicAttack = True
         if hero.left:
             direction = 'left'
         if hero.right:
@@ -114,43 +156,84 @@ while run:
             hero.swordAttack = True
         else:
             hero.swordAttack = False
-        
+    
         
     #-----character movement-----
     
-    if keys[pygame.K_LEFT] and hero.x > hero.vel:
+    if keys[pygame.K_LEFT] and hero.x > hero.vel - hero.height:
+        blocked = check_for_boss(left, x_inpath1, x_inpath2)
+        past = check_if_past(past_left)
+        if blocked == False:
             hero.x -= hero.vel
             hero.left = True
             hero.right = False
             hero.up = False
             hero.down = False
             hero.standing = False
-        
-    elif keys[pygame.K_RIGHT] and hero.x < 500 - hero.width - hero.vel:
-        hero.x += hero.vel
-        hero.left = False
-        hero.right = True
-        hero.up = False
-        hero.down = False
-        hero.standing = False
+        elif past == True:
+            hero.x -= hero.vel
+            hero.left = True
+            hero.right = False
+            hero.up = False
+            hero.down = False
+            hero.standing = False
 
+    elif keys[pygame.K_RIGHT] and hero.x < 500  -hero.width :
+        blocked = check_for_boss(right, x_inpath1, x_inpath2)
+        past = check_if_past(past_right)
+        if blocked == False:
+            hero.x += hero.vel
+            hero.left = False
+            hero.right = True
+            hero.up = False
+            hero.down = False
+            hero.standing = False
+        elif past == True:
+            hero.x += hero.vel
+            hero.left = False
+            hero.right = True
+            hero.up = False
+            hero.down = False
+            hero.standing = False
         
     elif keys[pygame.K_UP] and hero.y > hero.vel:
-        hero.y -= hero.vel
-        hero.left = False
-        hero.right = False
-        hero.up = True
-        hero.down = False
-        hero.standing = False
+        blocked = check_for_boss(up, y_inpath1, y_inpath2)
+        past = check_if_past(past_down)
+        if blocked == False:
+            hero.y -= hero.vel
+            hero.left = False
+            hero.right = False
+            hero.up = True
+            hero.down = False
+            hero.standing = False
+        elif past == True:
+            hero.y -= hero.vel
+            hero.left = False
+            hero.right = False
+            hero.up = True
+            hero.down = False
+            hero.standing = False
     
 
     elif keys[pygame.K_DOWN] and hero.y < 500 - hero.height - hero.vel:
-        hero.y += hero.vel
-        hero.left = False
-        hero.right = False
-        hero.up = False
-        hero.down = True
-        hero.standing = False
+        blocked = check_for_boss(down, y_inpath1, y_inpath2)
+        past = check_if_past(past_up)
+        print(blocked)
+        print(past)
+        if blocked == False:
+            hero.y += hero.vel
+            hero.left = False
+            hero.right = False
+            hero.up = False
+            hero.down = True
+            hero.standing = False
+        elif past == True:
+            hero.y += hero.vel
+            hero.left = False
+            hero.right = False
+            hero.up = False
+            hero.down = True
+            hero.standing = False
 
 
     else:
@@ -161,77 +244,53 @@ while run:
 
 # ----boss automated movement loop -----
         
-    while i == 7:
-        if boss.x-11 > hero.x:
-            if hero.hitbox[0] + hero.hitbox[2] - boss.hitbox[0] > -boss.vel:
-                break
-            boss.x -= boss.vel
-            boss.up = False
-            boss.down = False
-            boss.left = True
-            boss.right = False
-            boss.standing = False
-            if boss.y-11 > hero.y:
-                boss.y -= boss.vel  
-                boss.up = True
-                boss.down = False
-                boss.left = True
-                boss.right = False
-                boss.standing = False 
-            elif boss.y+11 < hero.y:
-                boss.y += boss.vel
-                boss.up = False
-                boss.down = True
-                boss.left = True
-                boss.right = False
-                boss.standing = False
-
-        if boss.x+11 < hero.x:
-            print(hero.hitbox[0])
-            print(boss.hitbox[2]+boss.hitbox[0])
-            if (hero.hitbox[0] - (boss.hitbox[2] + boss.hitbox[0])) < boss.vel:
-                break
-            boss.x += boss.vel
-            boss.up = False
-            boss.down = False
-            boss.left = False
-            boss.right = True
-            boss.standing = False
-            if boss.y-11 > hero.y:
-                boss.y -= boss.vel  
-                boss.up = True
-                boss.down = False
-                boss.left = False
-                boss.right = True
-                boss.standing = False 
-            elif boss.y+11 < hero.y:
-                boss.y += boss.vel
-                boss.up = False
-                boss.down = True
-                boss.left = False
-                boss.right = True
-                boss.standing = False
+    while i == 5:
+        #----boss auto walk left if it is the furthest from player------
+        if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) > boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
+            if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) > hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
+                if boss.hitbox[0]-boss.vel > hero.hitbox[0] + hero.hitbox[2]:
+                    boss.x -= boss.vel
+                    boss.up = False
+                    boss.down = False
+                    boss.left = True
+                    boss.right = False
+                    boss.standing = False
                     
-        if boss.y-11 > hero.y:
-            boss.y -= boss.vel  
-            boss.up = True
-            boss.down = False
-            boss.left = False
-            boss.right = False
-            boss.standing = False  
-        if boss.y+11 < hero.y:
-            boss.y += boss.vel
-            boss.up = False
-            boss.down = True
-            boss.left = False
-            boss.right = False
-            boss.standing = False
+        if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) > hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
+            if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) > boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
+                if hero.hitbox[0] > boss.hitbox[0] + boss.hitbox[2] + boss.vel:
+                    boss.x += boss.vel
+                    boss.up = False
+                    boss.down = False
+                    boss.left = False
+                    boss.right = True
+                    boss.standing = False
+                    
+        if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] > hero.hitbox[0] - boss.hitbox[0] +boss.hitbox[2]:
+            if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] > boss.hitbox[0] - hero.hitbox[0] + hero.hitbox[2]:
+                if boss.hitbox[1] - boss.vel > hero.hitbox[1] + hero.hitbox[3]:
+                    boss.y -= boss.vel
+                    boss.up = True
+                    boss.down = False
+                    boss.left = False
+                    boss.right = False
+                    boss.standing = False
+                    
+        if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] > boss.hitbox[0] - hero.hitbox[0] +hero.hitbox[2]:
+            if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] > hero.hitbox[0] - boss.hitbox[0] + boss.hitbox[2]:
+                if hero.hitbox[1] > boss.hitbox[1] + boss.hitbox[3] + boss.vel:
+                    boss.y += boss.vel
+                    boss.up = False
+                    boss.down = True
+                    boss.left = False
+                    boss.right = False
+                    boss.standing = False
         # else:
         #     boss.standing = True
         #     boss.walkCount = 0
 
         i += 1
-    if i > 7:
+    if i > 5:
         i = 0
     i += 1
         

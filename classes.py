@@ -128,6 +128,9 @@ class Player(object):
             if self.down:
                 win.blit(magicAttackDown, (self.x, self.y))
                 
+        def hit(self):
+            pass    
+        
         self.hitbox = (self.x, self.y, 20, 25)
         pygame.draw.rect(win, (255,0,0), self.hitbox,2)
         
@@ -143,14 +146,14 @@ class Boss(object):
         self.y = y
         self.width = width
         self.height = height
-        self.vel = 12
+        self.vel = 10
         self.left = False
         self.right = False
         self.up = False
         self.down = False
         self.walkCount = 0
         self.standing = True
-        self.hitbox = (self.x+1, self.y, 37, 47)
+        self.hitbox = (self.x+1, self.y, 37, 49)
     
     def draw(self, win):
         if self.walkCount + 1 >= 9:
