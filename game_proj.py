@@ -29,7 +29,8 @@ clock = pygame.time.Clock()
 def redrawGameWindow():
     win.blit(bg, (0,0)) 
     hero.draw(win)
-    boss.draw(win)
+    if boss.visible == True:
+        boss.draw(win)
     for fireball in fireballs:
         fireball.draw(win)
     for boss_fireball in boss_fireballs:
@@ -45,6 +46,7 @@ boss_fireballs = []
 run = True
 i=0
 j=0
+mana_regen = 0
 direction = 'down'
 boss_direction = 'down'
 fireballCoolDown = 0
@@ -101,6 +103,8 @@ while run:
         fireballCoolDown += 1
     if fireballCoolDown > 5:
         fireballCoolDown = 0
+    if hero.mana >= 2:
+        hero.no_mana = False
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -109,6 +113,11 @@ while run:
     #----hero fireballs -----
     
     for fireball in fireballs:
+            if fireball.y + fireball.radius < boss.hitbox[1] and fireball.y - fireball.radius < boss.hitbox[1] + boss.hitbox[3]:
+                if fireball.x + fireball.radius > boss.hitbox[0] and fireball.x - fireball.radius < boss.hitbox[0] + boss.hitbox[2]:
+                    boss.hit(fireball.damage)
+                    fireballs.pop(fireballs.index(fireball))
+            
             if fireball.x < 500 and fireball.x > 0 and fireball.y < 500 and fireball.y > 0:
                 fireball.fire()
             else:
@@ -137,14 +146,25 @@ while run:
         if hero.down:
             direction = 'down'
         
-        if hero.mana > 0:
-            hero.mana -= 1
+        if hero.mana >= 4 and hero.no_mana == False:
             if len(fireballs) < 5 and hero.equip == False:
+                hero.mana -= 4
                 pygame.mixer.Sound.play(fireball_sound)
                 fireballs.append(Projectile(round(hero.x + hero.width // 2), round(hero.y + hero.height // 2), (255, 0, 0), 5, direction))
                 fireballCoolDown = 1
+        else:
+            hero.no_mana = True
+    
+        
     else:
         hero.magicAttack = False
+        
+    while mana_regen == 20 and hero.mana <= 50:
+        hero.mana += 2 
+        mana_regen += 1
+    if mana_regen > 20:
+        mana_regen = 0
+    mana_regen += 1
         
     #-----weapon switching------
         

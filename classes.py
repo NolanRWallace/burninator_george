@@ -54,7 +54,7 @@ class Player(object):
         self.health = 50
         self.visible = True
         self.mana = 50
-        self.mana_out = 0
+        self.no_mana = False
     
     def draw(self, win):
         if self.walkCount + 1 >= 9:
@@ -132,12 +132,11 @@ class Player(object):
             if self.down:
                 win.blit(magicAttackDown, (self.x, self.y))
                 
-        def hit(self):
-            pass    
+        
         
         # mana
         pygame.draw.rect(win, (255, 165, 0),(self.hitbox[0], self.hitbox[1] - 30, 50, 10))
-        pygame.draw.rect(win, (0, 0, 255), (self.hitbox[0], self.hitbox[1] - 30, 50 - ((50/10) * (50-self.mana)), 10))
+        pygame.draw.rect(win, (0, 0, 255), (self.hitbox[0], self.hitbox[1] - 30, 50-(50-self.mana), 10))
 
         # health
         pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0], self.hitbox[1] - 20, 50, 10))
@@ -165,8 +164,16 @@ class Boss(object):
         self.walkCount = 0
         self.standing = True
         self.hitbox = (self.x+1, self.y, 37, 49)
-        self.health = 100
+        self.health = 50
         self.visible = True
+    
+    def hit(self, attack_dam):
+        if self.health > 0:
+            self.health -= attack_dam
+        elif self.health <=0:
+            self.visible = False
+        print (self.health)
+        
     
     def draw(self, win):
         if self.walkCount + 1 >= 9:
@@ -197,7 +204,7 @@ class Boss(object):
                 win.blit(georgestanding['stddown'], (self.x,self.y))
                 
         pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0], self.hitbox[1]-20, 50, 10))
-        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1]-20, 50 - ((50/10) * (100-self.health)), 10))
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1]-20, 50 - ((50-self.health)), 10))
 
         self.hitbox = (self.x+1, self.y, 37, 49)
         pygame.draw.rect(win, (255,0,0), self.hitbox,2)
@@ -213,6 +220,7 @@ class Projectile(object):
         self.radius = radius
         self.direction = direction
         self.vel = 8 
+        self.damage = 2
     
     def fire(self):
         if self.direction == 'left':
