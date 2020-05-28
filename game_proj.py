@@ -137,10 +137,12 @@ while run:
         if hero.down:
             direction = 'down'
         
-        if len(fireballs) < 5 and hero.equip == False:
-            pygame.mixer.Sound.play(fireball_sound)
-            fireballs.append(Projectile(round(hero.x + hero.width //2), round(hero.y + hero.height //2), (255,0,0), 5, direction))
-        fireballCoolDown = 1
+        if hero.mana > 0:
+            hero.mana -= 1
+            if len(fireballs) < 5 and hero.equip == False:
+                pygame.mixer.Sound.play(fireball_sound)
+                fireballs.append(Projectile(round(hero.x + hero.width // 2), round(hero.y + hero.height // 2), (255, 0, 0), 5, direction))
+                fireballCoolDown = 1
     else:
         hero.magicAttack = False
         

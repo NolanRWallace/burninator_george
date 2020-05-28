@@ -51,6 +51,10 @@ class Player(object):
         self.swordSlashCount = 0
         self.magicAttack = False
         self.hitbox = (self.x-2, self.y, 24, 25)
+        self.health = 50
+        self.visible = True
+        self.mana = 50
+        self.mana_out = 0
     
     def draw(self, win):
         if self.walkCount + 1 >= 9:
@@ -131,8 +135,15 @@ class Player(object):
         def hit(self):
             pass    
         
-        self.hitbox = (self.x-2, self.y, 24, 25)
-        pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
+        # mana
+        pygame.draw.rect(win, (255, 165, 0),(self.hitbox[0], self.hitbox[1] - 30, 50, 10))
+        pygame.draw.rect(win, (0, 0, 255), (self.hitbox[0], self.hitbox[1] - 30, 50 - ((50/10) * (50-self.mana)), 10))
+
+        # health
+        pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0], self.hitbox[1] - 20, 50, 10))
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - ((50/10) * (50-self.health)), 10))
+        self.hitbox = (self.x, self.y, 20, 25)
+        pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
         
 
 # ----end of player class-----
@@ -154,6 +165,8 @@ class Boss(object):
         self.walkCount = 0
         self.standing = True
         self.hitbox = (self.x+1, self.y, 37, 49)
+        self.health = 100
+        self.visible = True
     
     def draw(self, win):
         if self.walkCount + 1 >= 9:
@@ -182,6 +195,10 @@ class Boss(object):
             else: 
                 self.down
                 win.blit(georgestanding['stddown'], (self.x,self.y))
+                
+        pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0], self.hitbox[1]-20, 50, 10))
+        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1]-20, 50 - ((50/10) * (100-self.health)), 10))
+
         self.hitbox = (self.x+1, self.y, 37, 49)
         pygame.draw.rect(win, (255,0,0), self.hitbox,2)
                 
