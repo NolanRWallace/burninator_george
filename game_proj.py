@@ -1,6 +1,6 @@
 import pygame
 import random
-from classes import Player, Boss, Projectile
+from classes import Player, Boss, Projectile, Tree, BossMinion, Castle, Dragon
 pygame.init()
 
 # -----Sounds files imported----
@@ -13,15 +13,15 @@ sword_swing = pygame.mixer.Sound('music/sword_swing.wav')
 sword_hit = pygame.mixer.Sound('music/sword_hit.wav')
 
 
-win = pygame.display.set_mode((500,500))
+win = pygame.display.set_mode((500,600))
 
 pygame.display.set_caption("Burninator George!!!")
 char = pygame.image.load('hero/hero_front.png')
 
 
-# ----Backgroudn img loading ------
+# ----Background img loading ------
 bg = pygame.image.load('grassbg.png')
-
+mountain = pygame.transform.scale(pygame.image.load('bg_bg1.png'), (500,100))
 
 clock = pygame.time.Clock()
 # ----start of players class -----
@@ -31,16 +31,34 @@ def redrawGameWindow():
     hero.draw(win)
     if boss.visible == True:
         boss.draw(win)
+    win.blit(bg, (0,100)) 
+    win.blit(mountain, (0,0))
+    hero.draw(win)
+    boss.draw(win)
+    tree_2.draw(win)
+    tree_1.draw(win)
+    strongbad.draw(win)
+    castle.draw(win)
+    dragon.draw(win)
+
     for fireball in fireballs:
         fireball.draw(win)
     for boss_fireball in boss_fireballs:
         boss_fireball.draw(win)
     pygame.display.update()
     
+    pygame.display.flip()
+    
 # ---game setup----
 randomloc = random.randint(50, 450)
 hero = Player(300, 410, 24, 24)
 boss = Boss(randomloc, randomloc, 30, 30)
+tree_2 = Tree(115, 180, 65, 65, 2)
+tree_1 = Tree(340, 170, 75, 75, 1)
+strongbad = BossMinion(30,35,550)
+castle = Castle()
+dragon = Dragon(450)
+minions = []
 fireballs = []
 boss_fireballs = []
 run = True
@@ -118,7 +136,7 @@ while run:
                     boss.hit(fireball.damage)
                     fireballs.pop(fireballs.index(fireball))
             
-            if fireball.x < 500 and fireball.x > 0 and fireball.y < 500 and fireball.y > 0:
+            if fireball.x < 500 and fireball.x > 0 and fireball.y < 600 and fireball.y > 100:
                 fireball.fire()
             else:
                 fireballs.remove(fireball)
@@ -126,7 +144,7 @@ while run:
     #----boss fireballs------
     
     for boss_fireball in boss_fireballs:
-        if boss_fireball.x < 500 and boss_fireball.x > 0 and boss_fireball.y < 500 and boss_fireball.y > 0:
+        if boss_fireball.x < 500 and boss_fireball.x > 0 and boss_fireball.y < 600 and boss_fireball.y > 100:
             boss_fireball.fire()
         else:
             boss_fireballs.remove(boss_fireball)
@@ -199,8 +217,11 @@ while run:
             hero.up = False
             hero.down = False
             hero.standing = False
+        
+    #-----character movement-----
 
-    elif keys[pygame.K_RIGHT] and hero.x < 500  -hero.width :
+
+    elif keys[pygame.K_RIGHT] and hero.x < 600  -hero.width :
         blocked = check_for_boss(right, x_inpath1, x_inpath2)
         past = check_if_past(past_right)
         if blocked == False:
@@ -218,7 +239,7 @@ while run:
             hero.down = False
             hero.standing = False
         
-    elif keys[pygame.K_UP] and hero.y > hero.vel:
+    elif keys[pygame.K_UP] and hero.y > 100 - hero.vel:
         blocked = check_for_boss(up, y_inpath1, y_inpath2)
         past = check_if_past(past_down)
         if blocked == False:
@@ -237,11 +258,9 @@ while run:
             hero.standing = False
     
 
-    elif keys[pygame.K_DOWN] and hero.y < 500 - hero.height - hero.vel:
+    elif keys[pygame.K_DOWN] and hero.y < 600 - hero.height - hero.vel:
         blocked = check_for_boss(down, y_inpath1, y_inpath2)
         past = check_if_past(past_up)
-        print(blocked)
-        print(past)
         if blocked == False:
             hero.y += hero.vel
             hero.left = False
@@ -338,4 +357,5 @@ while run:
     #---rerender screen after game operations---
     redrawGameWindow()
 
+            
 pygame.quit()
