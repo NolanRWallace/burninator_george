@@ -246,8 +246,8 @@ while run:
         
     while i == 5:
         #----boss auto walk left if it is the furthest from player------
-        if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) > boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
-            if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) > hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
+        if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) >= boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
+            if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) >= hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
                 if boss.hitbox[0]-boss.vel > hero.hitbox[0] + hero.hitbox[2]:
                     boss.x -= boss.vel
                     boss.up = False
@@ -256,8 +256,8 @@ while run:
                     boss.right = False
                     boss.standing = False
                     
-        if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) > hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
-            if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) > boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
+        if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) >= hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
+            if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) >= boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
                 if hero.hitbox[0] > boss.hitbox[0] + boss.hitbox[2] + boss.vel:
                     boss.x += boss.vel
                     boss.up = False
@@ -266,8 +266,8 @@ while run:
                     boss.right = True
                     boss.standing = False
                     
-        if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] > hero.hitbox[0] - boss.hitbox[0] +boss.hitbox[2]:
-            if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] > boss.hitbox[0] - hero.hitbox[0] + hero.hitbox[2]:
+        if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] >= hero.hitbox[0] - boss.hitbox[0] +boss.hitbox[2]:
+            if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] >= boss.hitbox[0] - hero.hitbox[0] + hero.hitbox[2]:
                 if boss.hitbox[1] - boss.vel > hero.hitbox[1] + hero.hitbox[3]:
                     boss.y -= boss.vel
                     boss.up = True
@@ -276,8 +276,8 @@ while run:
                     boss.right = False
                     boss.standing = False
                     
-        if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] > boss.hitbox[0] - hero.hitbox[0] +hero.hitbox[2]:
-            if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] > hero.hitbox[0] - boss.hitbox[0] + boss.hitbox[2]:
+        if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] >= boss.hitbox[0] - hero.hitbox[0] +hero.hitbox[2]:
+            if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] >= hero.hitbox[0] - boss.hitbox[0] + boss.hitbox[2]:
                 if hero.hitbox[1] > boss.hitbox[1] + boss.hitbox[3] + boss.vel:
                     boss.y += boss.vel
                     boss.up = False
@@ -294,7 +294,7 @@ while run:
         i = 0
     i += 1
         
-    while j == 20:
+    while j == 23:
         if boss.left:
             boss_direction = 'left'
         if boss.right:
@@ -305,10 +305,10 @@ while run:
             boss_direction = 'down'
         if len(boss_fireballs) < 100:
             # pygame.mixer.Sound.play(fireball_sound)
-            boss_fireballs.append(Projectile(round(boss.x + boss.width //2), round(boss.y + boss.height //2), (255,0,0), 5, boss_direction))
+            boss_fireballs.append(Projectile(round(boss.x + boss.width //2), round(boss.y + boss.height //2), (255,0,0), 10, boss_direction))
         j += 1
         
-    if j > 20:
+    if j > 22:
         j = 0
     j += 1
 # -----end of boss movement loop-----
@@ -316,5 +316,4 @@ while run:
     #---rerender screen after game operations---
     redrawGameWindow()
 
-            
 pygame.quit()

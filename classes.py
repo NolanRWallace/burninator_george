@@ -50,7 +50,7 @@ class Player(object):
         self.swordAttack = False
         self.swordSlashCount = 0
         self.magicAttack = False
-        self.hitbox = (self.x, self.y, 20, 25)
+        self.hitbox = (self.x-2, self.y, 24, 25)
     
     def draw(self, win):
         if self.walkCount + 1 >= 9:
@@ -131,8 +131,8 @@ class Player(object):
         def hit(self):
             pass    
         
-        self.hitbox = (self.x, self.y, 20, 25)
-        pygame.draw.rect(win, (255,0,0), self.hitbox,2)
+        self.hitbox = (self.x-2, self.y, 24, 25)
+        pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
         
 
 # ----end of player class-----
@@ -182,7 +182,7 @@ class Boss(object):
             else: 
                 self.down
                 win.blit(georgestanding['stddown'], (self.x,self.y))
-        self.hitbox = (self.x+1, self.y, 37, 47)
+        self.hitbox = (self.x+1, self.y, 37, 49)
         pygame.draw.rect(win, (255,0,0), self.hitbox,2)
                 
 # ------end of burninator george class ------
