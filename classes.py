@@ -70,6 +70,7 @@ class Player(object):
         self.no_mana = False
         self.fireball_dam = 2
         
+        
     def hit(self, attack_dam):
         if self.health > 0:
             self.health -= attack_dam
@@ -188,6 +189,7 @@ class Boss(object):
         self.health = 50
         self.visible = True
         self.fireball_dam = 4
+        self.meleedam = 2
     
     def hit(self, attack_dam):
         if self.health > 0:
@@ -280,7 +282,7 @@ class BossMinion(object):
         self.y = 250
         self.width = width
         self.height = height
-        self.vel = 3
+        self.vel = 2
         self.end = end
         self.path = [self.y, self.end]
         self.image = pygame.transform.scale(pygame.image.load('george/stongbad.png'), (width,height))
@@ -334,7 +336,7 @@ class Dragon(object):
         self.y = random.randint(250, 550)
         self.end = end
         self.walkCount = 0
-        self.vel = 3
+        self.vel = 2
         self.path = [self.x, self.end]
         self.hitbox = (self.x, self.y, 40, 40)
         self.health = 25

@@ -95,6 +95,8 @@ def check_if_past(boss_past):
 
 # start screen
 font = pygame.font.SysFont(None,50)
+font1 = pygame.font.SysFont(None,25)
+font2 = pygame.font.SysFont(None,40)
 
 def draw_text (text, font, color, surface,x, y):
     textobj = font.render(text,1,color)
@@ -110,8 +112,15 @@ def main_menu():
     
     while intro:
         win.fill ((0,0,0))
-        draw_text('The Burninator!!!', font, (255, 255,255), win, 100, 250)
+        draw_text('The Burninator!!!', font, (255, 255,255), win, 100, 50)
+        draw_text('Defeat George the Burninator to win!' ,font2, (255, 255,255), win, 2, 90)
+
+        draw_text('Minions must be killed before ',font2, (255, 255,255), win, 45, 145)
+        draw_text('boss can take damage',font2, (255, 255,255), win, 90, 170)
         
+        draw_text('arrows keys for movement',font1, (255, 255,255), win, 125, 225)
+        draw_text('space bar for iceballs',font1, (255, 255,255), win, 140, 250)
+        draw_text('W to dash',font1, (255, 255,255), win, 185, 275)
         
         mouse = pygame.mouse.get_pos()
         # print(mouse)
@@ -260,10 +269,11 @@ while run:
     #----boss fireballs------
     
     for boss_fireball in boss_fireballs:
-        if boss_fireball.y + boss_fireball.radius > hero.hitbox[1] and boss_fireball.y - boss_fireball.radius < hero.hitbox[1] + boss.hitbox[3]:
-                if boss_fireball.x + boss_fireball.radius > hero.hitbox[0] and boss_fireball.x - boss_fireball.radius < hero.hitbox[0] + boss.hitbox[2]:
+        if boss_fireball.y - boss_fireball.radius > hero.hitbox[1] and boss_fireball.y - boss_fireball.radius < hero.hitbox[1] + hero.hitbox[3]:
+                if boss_fireball.x + boss_fireball.radius > hero.hitbox[0] and boss_fireball.x - boss_fireball.radius < hero.hitbox[0] + hero.hitbox[2]:
                     hero.hit(boss.fireball_dam)
-                    pygame.mixer.Sound.play(gothit)
+                    if hero.visible == True:
+                        pygame.mixer.Sound.play(gothit)
                     boss_fireballs.pop(boss_fireballs.index(boss_fireball))
                     
         if boss_fireball.x < 500 and boss_fireball.x > 0 and boss_fireball.y < 600 and boss_fireball.y > 100:
@@ -278,14 +288,18 @@ while run:
     # if hero.hitbox[1] < boss.hitbox[1] + boss.hitbox[3] and hero.hitbox[1] - 5 + hero.hitbox[3] > boss.hitbox[1]:
     #     if hero.hitbox[0] + hero.hitbox[2] > boss.hitbox[0] and hero.hitbox[0] < boss.hitbox[0] + boss.hitbox[2]:
     #         hero.hit(.5)
-    if hero.hitbox[1] < dragon.hitbox[1] + dragon.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > dragon.hitbox[1]:
-        if hero.hitbox[0] + hero.hitbox[2] > dragon.hitbox[0] and hero.hitbox[0] < dragon.hitbox[0] + dragon.hitbox[2]:
-            hero.hit(.5)
-            pygame.mixer.Sound.play(gothit)
-    if hero.hitbox[1] < strongbad.hitbox[1] + strongbad.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > strongbad.hitbox[1]:
-        if hero.hitbox[0] + hero.hitbox[2] > strongbad.hitbox[0] and hero.hitbox[0] < strongbad.hitbox[0] + strongbad.hitbox[2]:
-            hero.hit(.5)
-            pygame.mixer.Sound.play(gothit)
+    if dragon.visible == True:
+        if hero.hitbox[1] < dragon.hitbox[1] + dragon.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > dragon.hitbox[1]:
+            if hero.hitbox[0] + hero.hitbox[2] > dragon.hitbox[0] and hero.hitbox[0] < dragon.hitbox[0] + dragon.hitbox[2]:
+                hero.hit(.5)
+                if hero.visible == True:
+                    pygame.mixer.Sound.play(gothit)
+    if strongbad.visible == True:
+        if hero.hitbox[1] < strongbad.hitbox[1] + strongbad.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > strongbad.hitbox[1]:
+            if hero.hitbox[0] + hero.hitbox[2] > strongbad.hitbox[0] and hero.hitbox[0] < strongbad.hitbox[0] + strongbad.hitbox[2]:
+                hero.hit(.5)
+                if hero.visible == True:
+                    pygame.mixer.Sound.play(gothit) 
 
     keys = pygame.key.get_pressed()
     
@@ -355,156 +369,152 @@ while run:
     #-----character movement-----
     
     if keys[pygame.K_LEFT] and hero.x > 0 :
-        if boss.visible == True:
-            boss_blocked = check_for_boss(left, x_inpath1, x_inpath2)
-            boss_pass = check_if_past(past_left)
-            # tree1_blocked = check_for_boss(tree_1_left, x_inpath1_tree_1, x_inpath2_tree_1)
-            # tree1_pass = check_if_past(tree_1_past_left)
-            if boss_blocked == False:
-            # if boss_blocked == False and tree1_blocked == False and tree1_pass == False:
-                hero.x -= hero.vel
-                hero.left = True
-                hero.right = False
-                hero.up = False
-                hero.down = False
-                hero.standing = False
-            elif boss_pass == True:
-            # if boss_pass == True and tree1_blocked == False :
-                hero.x -= hero.vel
-                hero.left = True
-                hero.right = False
-                hero.up = False
-                hero.down = False
-                hero.standing = False
-            else:
-                hero.left = True
-                hero.right = False
-                hero.up = False
-                hero.down = False
-                hero.standing = False
-        else:
+        boss_blocked = check_for_boss(left, x_inpath1, x_inpath2)
+        boss_pass = check_if_past(past_left)
+        # tree1_blocked = check_for_boss(tree_1_left, x_inpath1_tree_1, x_inpath2_tree_1)
+        # tree1_pass = check_if_past(tree_1_past_left)
+        if boss_blocked == False:
+        # if boss_blocked == False and tree1_blocked == False and tree1_pass == False:
             hero.x -= hero.vel
             hero.left = True
             hero.right = False
             hero.up = False
             hero.down = False
             hero.standing = False
+        elif boss_pass == True:
+        # if boss_pass == True and tree1_blocked == False :
+            hero.x -= hero.vel
+            hero.left = True
+            hero.right = False
+            hero.up = False
+            hero.down = False
+            hero.standing = False
+        else:
+            hero.left = True
+            hero.right = False
+            hero.up = False
+            hero.down = False
+            hero.standing = False
+    # else:
+    #     hero.x -= hero.vel
+    #     hero.left = True
+    #     hero.right = False
+    #     hero.up = False
+    #     hero.down = False
+    #     hero.standing = False
         
     #-----character movement-----
 
 
     elif keys[pygame.K_RIGHT] and hero.x < 500  -hero.width:
-        if boss.visible == True:
-            boss_blocked = check_for_boss(right, x_inpath1, x_inpath2)
-            boss_pass = check_if_past(past_right)
-            # tree2_blocked = check_for_boss(tree_2_right, x_inpath1_tree_2, x_inpath2_tree_2)
-            # tree2_pass = check_if_past(tree_2_past_right)
-            if boss_blocked == False:
-            # if boss_blocked == False and tree2_blocked == False and tree2_pass == False:
-                hero.x += hero.vel
-                hero.left = False
-                hero.right = True
-                hero.up = False
-                hero.down = False
-                hero.standing = False
-            elif boss_pass == True:
-            # if boss_pass == True and tree2_blocked == False :
-                hero.x += hero.vel
-                hero.left = False
-                hero.right = True
-                hero.up = False
-                hero.down = False
-                hero.standing = False
-            else:
-                hero.left = False
-                hero.right = True
-                hero.up = False
-                hero.down = False
-                hero.standing = False
-        else:
+        boss_blocked = check_for_boss(right, x_inpath1, x_inpath2)
+        boss_pass = check_if_past(past_right)
+        # tree2_blocked = check_for_boss(tree_2_right, x_inpath1_tree_2, x_inpath2_tree_2)
+        # tree2_pass = check_if_past(tree_2_past_right)
+        if boss_blocked == False:
+        # if boss_blocked == False and tree2_blocked == False and tree2_pass == False:
             hero.x += hero.vel
             hero.left = False
             hero.right = True
             hero.up = False
             hero.down = False
             hero.standing = False
+        elif boss_pass == True:
+        # if boss_pass == True and tree2_blocked == False :
+            hero.x += hero.vel
+            hero.left = False
+            hero.right = True
+            hero.up = False
+            hero.down = False
+            hero.standing = False
+        else:
+            hero.left = False
+            hero.right = True
+            hero.up = False
+            hero.down = False
+            hero.standing = False
+    # else:
+    #     hero.x += hero.vel
+    #     hero.left = False
+    #     hero.right = True
+    #     hero.up = False
+    #     hero.down = False
+    #     hero.standing = False
         
     elif keys[pygame.K_UP] and hero.y > 100:
-        if boss.visible == True:
-            boss_blocked = check_for_boss(up, y_inpath1, y_inpath2)
-            boss_pass = check_if_past(past_down)
-            # tree1_blocked = check_for_boss(tree_1_up, y_inpath1_tree_1, y_inpath2_tree_1)
-            # tree1_pass = check_if_past(tree_1_past_up)
-            # tree2_blocked = check_for_boss(tree_2_up, y_inpath1_tree_2, y_inpath2_tree_2)
-            # tree2_pass = check_if_past(tree_2_past_down)
-            if boss_blocked == False:
-            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-                hero.y -= hero.vel
-                hero.left = False
-                hero.right = False
-                hero.up = True
-                hero.down = False
-                hero.standing = False
-            elif boss_pass == True:
-            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-                hero.y -= hero.vel
-                hero.left = False
-                hero.right = False
-                hero.up = True
-                hero.down = False
-                hero.standing = False
-            else:
-                hero.left = False
-                hero.right = False
-                hero.up = True
-                hero.down = False
-                hero.standing = False
-        else:
+        boss_blocked = check_for_boss(up, y_inpath1, y_inpath2)
+        boss_pass = check_if_past(past_down)
+        # tree1_blocked = check_for_boss(tree_1_up, y_inpath1_tree_1, y_inpath2_tree_1)
+        # tree1_pass = check_if_past(tree_1_past_up)
+        # tree2_blocked = check_for_boss(tree_2_up, y_inpath1_tree_2, y_inpath2_tree_2)
+        # tree2_pass = check_if_past(tree_2_past_down)
+        if boss_blocked == False:
+        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
             hero.y -= hero.vel
             hero.left = False
             hero.right = False
             hero.up = True
             hero.down = False
             hero.standing = False
+        elif boss_pass == True:
+        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
+            hero.y -= hero.vel
+            hero.left = False
+            hero.right = False
+            hero.up = True
+            hero.down = False
+            hero.standing = False
+        else:
+            hero.left = False
+            hero.right = False
+            hero.up = True
+            hero.down = False
+            hero.standing = False
+    # else:
+    #     hero.y -= hero.vel
+    #     hero.left = False
+    #     hero.right = False
+    #     hero.up = True
+    #     hero.down = False
+    #     hero.standing = False
 
 
     elif keys[pygame.K_DOWN] and hero.y < 600 - hero.height - hero.vel:
-        if boss.visible == True:
-            boss_blocked = check_for_boss(down, y_inpath1, y_inpath2)
-            boss_pass = check_if_past(past_up)
-            # tree1_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
-            # tree1_pass = check_if_past(tree_1_past_down)
-            # tree2_blocked = check_for_boss(tree_2_down, y_inpath1_tree_2, y_inpath2_tree_2)
-            # tree2_pass = check_if_past(tree_2_past_up)
-            if boss_blocked == False:
-            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-                hero.y += hero.vel
-                hero.left = False
-                hero.right = False
-                hero.up = False
-                hero.down = True
-                hero.standing = False
-            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-            elif boss_pass == True:
-                hero.y += hero.vel
-                hero.left = False
-                hero.right = False
-                hero.up = False
-                hero.down = True
-                hero.standing = False
-            else:
-                hero.left = False
-                hero.right = False
-                hero.up = False
-                hero.down = True
-                hero.standing = False
-        else:
+        boss_blocked = check_for_boss(down, y_inpath1, y_inpath2)
+        boss_pass = check_if_past(past_up)
+        # tree1_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
+        # tree1_pass = check_if_past(tree_1_past_down)
+        # tree2_blocked = check_for_boss(tree_2_down, y_inpath1_tree_2, y_inpath2_tree_2)
+        # tree2_pass = check_if_past(tree_2_past_up)
+        if boss_blocked == False:
+        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
             hero.y += hero.vel
             hero.left = False
             hero.right = False
             hero.up = False
             hero.down = True
             hero.standing = False
+        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
+        elif boss_pass == True:
+            hero.y += hero.vel
+            hero.left = False
+            hero.right = False
+            hero.up = False
+            hero.down = True
+            hero.standing = False
+        else:
+            hero.left = False
+            hero.right = False
+            hero.up = False
+            hero.down = True
+            hero.standing = False
+    # else:
+    #     hero.y += hero.vel
+    #     hero.left = False
+    #     hero.right = False
+    #     hero.up = False
+    #     hero.down = True
+    #     hero.standing = False
 
 
     else:
@@ -518,45 +528,45 @@ while run:
     while i == 5:
         if hero.visible == True:
             #----boss auto walk left if it is the furthest from player------
-            if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) >= boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
-                if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) >= hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
-                    if boss.hitbox[0]-boss.vel-hero.vel > hero.hitbox[0] + hero.hitbox[2]:
-                        boss.x -= boss.vel
-                        boss.up = False
-                        boss.down = False
-                        boss.left = True
-                        boss.right = False
-                        boss.standing = False
-                        
-            if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) >= hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
-                if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) >= boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
-                    if hero.hitbox[0] > boss.hitbox[0] + boss.hitbox[2] + boss.vel + hero.vel:
-                        boss.x += boss.vel
-                        boss.up = False
-                        boss.down = False
-                        boss.left = False
-                        boss.right = True
-                        boss.standing = False
-                        
-            if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] >= hero.hitbox[0] - boss.hitbox[0] +boss.hitbox[2]:
-                if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] >= boss.hitbox[0] - hero.hitbox[0] + hero.hitbox[2]:
-                    if boss.hitbox[1] - boss.vel - hero.vel> hero.hitbox[1] + hero.hitbox[3]:
-                        boss.y -= boss.vel
-                        boss.up = True
-                        boss.down = False
-                        boss.left = False
-                        boss.right = False
-                        boss.standing = False
-                        
-            if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] >= boss.hitbox[0] - hero.hitbox[0] +hero.hitbox[2]:
-                if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] >= hero.hitbox[0] - boss.hitbox[0] + boss.hitbox[2]:
-                    if hero.hitbox[1] > boss.hitbox[1] + boss.hitbox[3] + boss.vel + hero.vel:
-                        boss.y += boss.vel
-                        boss.up = False
-                        boss.down = True
-                        boss.left = False
-                        boss.right = False
-                        boss.standing = False
+                if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) >= boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
+                    if boss.hitbox[0] - (hero.hitbox[0] + hero.hitbox[2]) >= hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
+                        if boss.hitbox[0]-boss.vel-hero.vel > hero.hitbox[0] + hero.hitbox[2]:
+                            boss.x -= boss.vel
+                            boss.up = False
+                            boss.down = False
+                            boss.left = True
+                            boss.right = False
+                            boss.standing = False
+                            
+                if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) >= hero.hitbox[1] - (boss.hitbox[1] + boss.hitbox[3]):
+                    if hero.hitbox[0] - (boss.hitbox[0] + boss.hitbox[2]) >= boss.hitbox[1] - (hero.hitbox[1] + hero.hitbox[3]):
+                        if hero.hitbox[0] > boss.hitbox[0] + boss.hitbox[2] + boss.vel + hero.vel:
+                            boss.x += boss.vel
+                            boss.up = False
+                            boss.down = False
+                            boss.left = False
+                            boss.right = True
+                            boss.standing = False
+                            
+                if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] >= hero.hitbox[0] - boss.hitbox[0] +boss.hitbox[2]:
+                    if boss.hitbox[1] - hero.hitbox[1] + hero.hitbox[3] >= boss.hitbox[0] - hero.hitbox[0] + hero.hitbox[2]:
+                        if boss.hitbox[1] - boss.vel - hero.vel> hero.hitbox[1] + hero.hitbox[3]:
+                            boss.y -= boss.vel
+                            boss.up = True
+                            boss.down = False
+                            boss.left = False
+                            boss.right = False
+                            boss.standing = False
+                            
+                if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] >= boss.hitbox[0] - hero.hitbox[0] +hero.hitbox[2]:
+                    if hero.hitbox[1] - boss.hitbox[1] + boss.hitbox[3] >= hero.hitbox[0] - boss.hitbox[0] + boss.hitbox[2]:
+                        if hero.hitbox[1] > boss.hitbox[1] + boss.hitbox[3] + boss.vel + hero.vel:
+                            boss.y += boss.vel
+                            boss.up = False
+                            boss.down = True
+                            boss.left = False
+                            boss.right = False
+                            boss.standing = False
         # else:
         #     boss.standing = True
         #     boss.walkCount = 0
