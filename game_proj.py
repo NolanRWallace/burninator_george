@@ -42,7 +42,6 @@ def main():
             
         
     # ---game setup----
-
     randomloc = random.randint(50, 450)
     hero = Player(300, 410, 24, 24)
     boss = Boss(randomloc, randomloc, 30, 30)
@@ -63,7 +62,7 @@ def main():
     boss_direction = 'down'
     fireballCoolDown = 0
     run = True
-        
+            
 
 
     def redrawGameWindow():
@@ -102,50 +101,60 @@ def main():
     font = pygame.font.SysFont(None,50)
     font1 = pygame.font.SysFont(None,25)
     font2 = pygame.font.SysFont(None,40)
+    #screens
+    run = False
+    font = pygame.font.SysFont(None,50)
+    smallfont = pygame.font.SysFont(None, 35)
+    titlefont = pygame.font.SysFont(None, 75)
 
     def draw_text (text, font, color, surface,x, y):
         textobj = font.render(text,1,color)
         textrect = textobj.get_rect()
         textrect.topleft = (x, y)
         surface.blit(textobj,textrect)
-        
-    run = False
-    def main_menu():
-        
-        click = False
-        intro = True
-        
-        while intro:
-            win.fill ((0,0,0))
-            draw_text('The Burninator!!!', font, (255, 255,255), win, 100, 50)
-            draw_text('Defeat George the Burninator to win!' ,font2, (255, 255,255), win, 2, 90)
 
-            draw_text('Minions must be killed before ',font2, (255, 255,255), win, 45, 145)
-            draw_text('boss can take damage',font2, (255, 255,255), win, 90, 170)
+    # win_condition
+    def victory():
+        waiting = True
+        
+        while waiting:
+            win.fill((0,0,0))
+            draw_text('Congratulations!', font, (255, 255,255), win, 100, 200)
+            draw_text("You beat the Burninator!", smallfont, (255,255,255), win, 100, 250)
+            for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                    if event.type == pygame.KEYUP:
+                        waiting = False
+            pygame.display.update()
             
-            draw_text('arrows keys for movement',font1, (255, 255,255), win, 125, 225)
-            draw_text('space bar for iceballs',font1, (255, 255,255), win, 140, 250)
-            draw_text('W to dash',font1, (255, 255,255), win, 185, 275)
+            
+    # lose_condition
+    def game_over():
+        click = False
+        waiting = True
+        
+        while waiting:
+            win.fill ((0,0,0))
+            draw_text('Oops! You died!', titlefont, (255, 255,255), win, 50, 250)
             
             mouse = pygame.mouse.get_pos()
             # print(mouse)
-
-            start_button = pygame.Rect(100, 450, 100, 50)
+            again_button = pygame.Rect(100, 450, 100, 50)
             quit_button = pygame.Rect (250, 450, 100, 50)
-            
-            
-            pygame.draw.rect(win, (0,255,0), start_button)
-            draw_text('Start', font, (255,255,255), win, 110, 455)
-            
-            pygame.draw.rect(win, (255,0,0), quit_button)
-            draw_text('Quit', font, (255,255,255), win, 260, 455)
-            pygame.display.update()
-            if start_button.collidepoint(mouse):
+            if again_button.collidepoint(mouse):
                 if click:
                     return True
             if quit_button.collidepoint(mouse):
                 if click:
                     pygame.quit()
+            
+            pygame.draw.rect(win, (0,0,255), again_button)
+            draw_text('Retry', font, (255,255,255), win, 105, 457)
+            
+            pygame.draw.rect(win, (255,0,0), quit_button)
+            draw_text('Quit', font, (255,255,255), win, 265, 457)
+            
             click = False
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -154,18 +163,70 @@ def main():
                 if event.type == MOUSEBUTTONDOWN:
                     if event.button == 1:
                         click = True
-
+                        main()
             
             clock.tick(FRAMERATE)
 
 
-    main_menu()
+            
 
+            hero.visible = True
+            pygame.display.update()
+            clock.tick(FRAMERATE)
+            
+        
+    def main_menu():
+        if win_cond == False or lose_cond == False:
+            click = False
+            intro = True
+            
+            while intro:
+                win.fill ((0,0,0))
+                draw_text('The Burninator!!!', font, (255, 255,255), win, 100, 50)
+                draw_text('Defeat George the Burninator to win!' ,font2, (255, 255,255), win, 2, 90)
+
+                draw_text('Minions must be killed before ',font2, (255, 255,255), win, 45, 145)
+                draw_text('boss can take damage',font2, (255, 255,255), win, 90, 170)
+                
+                draw_text('arrows keys for movement',font1, (255, 255,255), win, 125, 225)
+                draw_text('space bar for iceballs',font1, (255, 255,255), win, 140, 250)
+                draw_text('W to dash',font1, (255, 255,255), win, 185, 275)
+            
+                mouse = pygame.mouse.get_pos()
+                # print(mouse)
+                start_button = pygame.Rect(100, 450, 100, 50)
+                quit_button = pygame.Rect (250, 450, 100, 50)
+                if start_button.collidepoint(mouse):
+                    if click:
+                        return True
+                if quit_button.collidepoint(mouse):
+                    if click:
+                        pygame.quit()
+                
+                pygame.draw.rect(win, (0,255,0), start_button)
+                draw_text('Start', font, (255,255,255), win, 112, 457)
+                
+                pygame.draw.rect(win, (255,0,0), quit_button)
+                draw_text('Quit', font, (255,255,255), win, 265, 457)
+                
+                click = False
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    if event.type == MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            click = True
+
+                pygame.display.update()
+                clock.tick(FRAMERATE)
+
+
+    main_menu()
 
     #----game operations loop -----
     # def game():
     #----game operations loop -----
-
     run = True
     while run:
         counter += 1
@@ -611,13 +672,17 @@ def main():
             counter = 0
             not_pressed = True
         #---rerender screen after game operations---
-        redrawGameWindow()
+        
         if boss.visible == False:
             win_cond == True
+            # while win_cond == True:
+            victory()
+        
         if hero.visible == False:
             lose_cond == True
-
-                
+            # while lose_cond == True:
+            game_over()
+        
+        redrawGameWindow()            
     pygame.quit()
-
 main()
