@@ -1,6 +1,8 @@
-import pygame
+import pygame, sys
 import random
+import time
 from classes import Player, Boss, Projectile, Tree, BossMinion, Castle, Dragon
+from pygame.locals import *
 pygame.init()
 
 # -----Sounds files imported----
@@ -91,8 +93,63 @@ def check_if_past(boss_past):
     else:
         return False
 
-#----game operations loop -----
+# start screen
+font = pygame.font.SysFont(None,50)
 
+def draw_text (text, font, color, surface,x, y):
+    textobj = font.render(text,1,color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj,textrect)
+    
+run = False
+def main_menu():
+    
+    click = False
+    intro = True
+    
+    while intro:
+        win.fill ((0,0,0))
+        draw_text('The Burninator!!!', font, (255, 255,255), win, 100, 250)
+        
+        
+        mouse = pygame.mouse.get_pos()
+        # print(mouse)
+
+        start_button = pygame.Rect(100, 450, 100, 50)
+        quit_button = pygame.Rect (250, 450, 100, 50)
+        if start_button.collidepoint(mouse):
+            if click:
+                return True
+        if quit_button.collidepoint(mouse):
+            if click:
+                pygame.quit()
+        
+        pygame.draw.rect(win, (0,255,0), start_button)
+        draw_text('Start', font, (255,255,255), win, 110, 455)
+        
+        pygame.draw.rect(win, (255,0,0), quit_button)
+        draw_text('Quit', font, (255,255,255), win, 260, 455)
+        
+        click = False
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        pygame.display.update()
+        clock.tick(FRAMERATE)
+
+
+main_menu()
+
+#----game operations loop -----
+# def game():
+#----game operations loop -----
+run = True
 while run:
     counter += 1
     clock.tick(FRAMERATE)
