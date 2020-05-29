@@ -68,10 +68,10 @@ class Player(object):
     def hit(self, attack_dam):
         if self.health > 0:
             self.health -= attack_dam
-            print(self.health)
+            (self.health)
         elif self.health <=0:
             self.visible = False
-            print(self.visible)
+            (self.visible)
 
     def draw(self, win):
         if self.visible == True:
