@@ -3,7 +3,7 @@ import random
 
 pygame.mixer.init()
 gothit = pygame.mixer.Sound('music/gothit.wav')
-gothit.set_volume(.1)
+gothit.set_volume(.25)
 
 
 heroImg = {
@@ -73,7 +73,7 @@ class Player(object):
     def hit(self, attack_dam):
         if self.health > 0:
             self.health -= attack_dam
-            # pygame.mixer.Sound.play(gothit)
+            # 15
         elif self.health <=0:
             self.visible = False
 

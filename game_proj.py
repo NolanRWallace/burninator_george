@@ -11,7 +11,7 @@ pygame.mixer.music.play(-1)
 fireball_sound = pygame.mixer.Sound('music/Fireball.wav')
 fireball_sound.set_volume(.05)
 gothit = pygame.mixer.Sound('music/gothit.wav')
-gothit.set_volume(.1)
+gothit.set_volume(.25)
 freezeball_sound = pygame.mixer.Sound('music/freeze.wav')
 freezeball_sound.set_volume(.05)
 sword_swing = pygame.mixer.Sound('music/sword_swing.wav')
@@ -39,8 +39,8 @@ clock = pygame.time.Clock()
 randomloc = random.randint(50, 450)
 hero = Player(300, 410, 24, 24)
 boss = Boss(randomloc, randomloc, 30, 30)
-tree_2 = Tree(115, 180, 65, 65, 2)
-tree_1 = Tree(340, 170, 75, 75, 1)
+tree_2 = Tree(115, 100, 65, 65, 2)
+tree_1 = Tree(340, 100, 75, 75, 1)
 strongbad = BossMinion(30,35,550)
 castle = Castle()
 dragon = Dragon(450)
@@ -284,7 +284,7 @@ while run:
             # tree1_blocked = check_for_boss(tree_1_left, x_inpath1_tree_1, x_inpath2_tree_1)
             # tree1_pass = check_if_past(tree_1_past_left)
             if boss_blocked == False:
-            # elif boss_pass == True and tree2_blocked == False:
+            # if boss_blocked == False and tree1_blocked == False and tree1_pass == False:
                 hero.x -= hero.vel
                 hero.left = True
                 hero.right = False
@@ -292,7 +292,7 @@ while run:
                 hero.down = False
                 hero.standing = False
             elif boss_pass == True:
-            # elif boss_pass == True and tree2_blocked == False:
+            # if boss_pass == True and tree1_blocked == False :
                 hero.x -= hero.vel
                 hero.left = True
                 hero.right = False
@@ -323,7 +323,7 @@ while run:
             # tree2_blocked = check_for_boss(tree_2_right, x_inpath1_tree_2, x_inpath2_tree_2)
             # tree2_pass = check_if_past(tree_2_past_right)
             if boss_blocked == False:
-            # elif boss_pass == True and tree2_blocked == False:
+            # if boss_blocked == False and tree2_blocked == False and tree2_pass == False:
                 hero.x += hero.vel
                 hero.left = False
                 hero.right = True
@@ -331,7 +331,7 @@ while run:
                 hero.down = False
                 hero.standing = False
             elif boss_pass == True:
-            # elif boss_pass == True and tree2_blocked == False:
+            # if boss_pass == True and tree2_blocked == False :
                 hero.x += hero.vel
                 hero.left = False
                 hero.right = True
@@ -512,9 +512,9 @@ while run:
     #---rerender screen after game operations---
     redrawGameWindow()
     if boss.visible == False:
-        win_cond == True
+        win_cond = True
     if hero.visible == False:
-        lose_cond == True
+        lose_cond = True
 
             
 pygame.quit()
