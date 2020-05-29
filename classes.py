@@ -189,14 +189,12 @@ class Boss(object):
     def hit(self, attack_dam):
         if self.health > 0:
             self.health -= attack_dam
-            print(self.health)
         elif self.health <=0:
             self.visible = False
-            print(self.visible)
         
     
     def draw(self, win):
-        if self.visible == True:
+        if self.visible:
             if self.walkCount + 1 >= 9:
                 self.walkCount = 0
 
@@ -241,6 +239,7 @@ class Projectile(object):
         self.radius = radius
         self.direction = direction
         self.vel = 8 
+        self.damage = 2
     
     def fire(self):
         if self.direction == 'left':
@@ -275,23 +274,33 @@ class Tree(object):
 class BossMinion(object):
     def __init__(self, width, height, end):
         self.x = random.randint(50, 450)
-        self.y = random.randint(250, 550)
+        self.y = 250
         self.width = width
         self.height = height
-        self.vel = 5
+        self.vel = 3
         self.end = end
         self.path = [self.y, self.end]
         self.image = pygame.transform.scale(pygame.image.load('george/stongbad.png'), (width,height))
         self.hitbox = (self.x, self.y, 30, 35)
-        
+        self.health = 25
+        self.visible = True
 
+    def hit(self, attack_dam):
+        if self.health > 0:
+            self.health -= attack_dam
+        elif self.health <=0:
+            self.visible = False
 
     def draw(self, win):
-        self.move()
-        win.blit(self.image, (self.x, self.y))
-        self.hitbox = (self.x, self.y, 30, 35)
-        pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
-    
+        if self.visible:
+            self.move()
+            win.blit(self.image, (self.x, self.y))
+            self.hitbox = (self.x, self.y, 30, 35)
+            pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
+
+            pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0]+5, self.hitbox[1]-15, 25, 5))
+            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0]+5, self.hitbox[1]-15, 25 - ((25-self.health)), 5))
+        
     def move(self):
         if self.vel > 0:
             if self.y + self.vel < self.path[1]:
@@ -318,26 +327,39 @@ class Castle(object):
 
 class Dragon(object):
     def __init__(self, end):
-        self.x = random.randint(50, 450)
+        self.x = 50
         self.y = random.randint(250, 550)
         self.end = end
         self.walkCount = 0
-        self.vel = 5
+        self.vel = 3
         self.path = [self.x, self.end]
         self.hitbox = (self.x, self.y, 40, 40)
+        self.health = 25
+        self.visible = True
+
+    def hit(self, attack_dam):
+        if self.health > 0:
+            self.health -= attack_dam
+        elif self.health <=0:
+            self.visible = False
 
     def draw(self, win):
-        self.move()
-        if self.walkCount + 1 >= 9:
-            self.walkCount = 0
-        if self.vel > 0:
-            win.blit(dragonImg['dragonRight'][self.walkCount // 3], (self.x, self.y))
-            self.walkCount += 1
-        else:
-            win.blit(dragonImg['dragonLeft'][self.walkCount // 3], (self.x, self.y))
-            self.walkCount += 1
-        self.hitbox = (self.x, self.y, 40, 40)
-        pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
+        if self.visible:
+            self.move()
+
+            if self.walkCount + 1 >= 9:
+                self.walkCount = 0
+            if self.vel > 0:
+                win.blit(dragonImg['dragonRight'][self.walkCount // 3], (self.x, self.y))
+                self.walkCount += 1
+            else:
+                win.blit(dragonImg['dragonLeft'][self.walkCount // 3], (self.x, self.y))
+                self.walkCount += 1
+            self.hitbox = (self.x, self.y, 40, 40)
+            pygame.draw.rect(win, (255,0,0), self.hitbox, 2)
+
+            pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0]+5, self.hitbox[1]-15, 25, 5))
+            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0]+5, self.hitbox[1]-15, 25 - ((25-self.health)), 5))
 
     def move(self):
         if self.vel > 0:

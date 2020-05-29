@@ -27,7 +27,6 @@ mountain = pygame.transform.scale(pygame.image.load('bg_bg1.png'), (500,100))
 clock = pygame.time.Clock()
 # ----start of players class -----
         
-
     
 # ---game setup----
 randomloc = random.randint(50, 450)
@@ -156,10 +155,19 @@ while run:
     for fireball in fireballs:
             if fireball.y + fireball.radius > boss.hitbox[1] and fireball.y - fireball.radius < boss.hitbox[1] + boss.hitbox[3]:
                 if fireball.x + fireball.radius > boss.hitbox[0] and fireball.x - fireball.radius < boss.hitbox[0] + boss.hitbox[2]:
-                    boss.hit(hero.fireball_dam)
+                    if strongbad.visible == False and dragon.visible == False:
+                        boss.hit(fireball.damage)
+                        fireballs.pop(fireballs.index(fireball))
+
+            elif fireball.y + fireball.radius > strongbad.hitbox[1] and fireball.y - fireball.radius < strongbad.hitbox[1] + strongbad.hitbox[3]:
+                if fireball.x + fireball.radius > strongbad.hitbox[0] and fireball.x - fireball.radius < strongbad.hitbox[0] + strongbad.hitbox[2]:
+                    strongbad.hit(fireball.damage)
                     fireballs.pop(fireballs.index(fireball))
-            
-            
+            elif fireball.y + fireball.radius > dragon.hitbox[1] and fireball.y - fireball.radius < dragon.hitbox[1] + dragon.hitbox[3]:
+                if fireball.x + fireball.radius > dragon.hitbox[0] and fireball.x - fireball.radius < dragon.hitbox[0] + dragon.hitbox[2]:
+                    dragon.hit(fireball.damage)
+                    fireballs.pop(fireballs.index(fireball))
+
             if fireball.x < 500 and fireball.x > 0 and fireball.y < 600 and fireball.y > 100:
                 fireball.fire()
             else:
@@ -177,6 +185,15 @@ while run:
             boss_fireball.fire()
         else:
             boss_fireballs.remove(boss_fireball)
+    
+    #---------- minion colliosion damage to hero------------------------
+
+    if hero.hitbox[1] < dragon.hitbox[1] + dragon.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > dragon.hitbox[1]:
+        if hero.hitbox[0] + hero.hitbox[2] > dragon.hitbox[0] and hero.hitbox[0] < dragon.hitbox[0] + dragon.hitbox[2]:
+            hero.hit(.05)
+    if hero.hitbox[1] < strongbad.hitbox[1] + strongbad.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > strongbad.hitbox[1]:
+        if hero.hitbox[0] + hero.hitbox[2] > strongbad.hitbox[0] and hero.hitbox[0] < strongbad.hitbox[0] + strongbad.hitbox[2]:
+            hero.hit(.05)
 
     keys = pygame.key.get_pressed()
     
@@ -194,7 +211,7 @@ while run:
             direction = 'down'
         
         if hero.mana >= 4 and hero.no_mana == False:
-            if len(fireballs) < 5 and hero.equip == False:
+            if len(fireballs) < 10 and hero.equip == False:
                 hero.mana -= 4
                 pygame.mixer.Sound.play(fireball_sound)
                 fireballs.append(Projectile(round(hero.x + hero.width // 2), round(hero.y + hero.height // 2), (52, 232, 235), 5, direction))
@@ -333,8 +350,8 @@ while run:
         if boss.visible == True:
             boss_blocked = check_for_boss(down, y_inpath1, y_inpath2)
             boss_pass = check_if_past(past_up)
-            tree_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
-            tree_pass = check_if_past(tree_1_past_up)
+            # tree_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
+            # tree_pass = check_if_past(tree_1_past_up)
             if boss_blocked == False:
                 hero.y += hero.vel
                 hero.left = False
@@ -440,7 +457,7 @@ while run:
         
     if j > 60:
         j = 0
-    j += 1
+    j += 1 
 # -----end of boss movement loop-----
 
     #---rerender screen after game operations---
