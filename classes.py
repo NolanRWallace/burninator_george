@@ -73,7 +73,6 @@ class Player(object):
     def hit(self, attack_dam):
         if self.health > 0:
             self.health -= attack_dam
-            # 15
         elif self.health <=0:
             self.visible = False
 
@@ -378,4 +377,3 @@ class Dragon(object):
             else:
                 self.vel = self.vel *-1
                 self.walkCount = 0
-

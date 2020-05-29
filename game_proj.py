@@ -31,7 +31,10 @@ char = pygame.image.load('hero/hero_front.png')
 bg = pygame.image.load('grassbg.png')
 mountain = pygame.transform.scale(pygame.image.load('bg_bg1.png'), (500,100))
 
+FRAMERATE = 30
 clock = pygame.time.Clock()
+counter = 0
+not_pressed = True
 # ----start of players class -----
         
     
@@ -39,15 +42,14 @@ clock = pygame.time.Clock()
 randomloc = random.randint(50, 450)
 hero = Player(300, 410, 24, 24)
 boss = Boss(randomloc, randomloc, 30, 30)
-tree_2 = Tree(115, 100, 65, 65, 2)
-tree_1 = Tree(340, 100, 75, 75, 1)
+tree_2 = Tree(115, 180, 65, 65, 2)
+tree_1 = Tree(340, 170, 75, 75, 1)
 strongbad = BossMinion(30,35,550)
 castle = Castle()
 dragon = Dragon(450)
 minions = []
 fireballs = []
 boss_fireballs = []
-run = True
 i=0
 j=0
 win_cond = False
@@ -56,6 +58,7 @@ mana_regen = 0
 direction = 'down'
 boss_direction = 'down'
 fireballCoolDown = 0
+run = True
 
 def redrawGameWindow():
     win.blit(bg, (0,100)) 
@@ -91,7 +94,8 @@ def check_if_past(boss_past):
 #----game operations loop -----
 
 while run:
-    clock.tick(30)
+    counter += 1
+    clock.tick(FRAMERATE)
     
     #----y boss hitbox ranges-----
     x_inpath1 = boss.hitbox[1] + boss.hitbox[3] > hero.hitbox[1]
@@ -210,26 +214,42 @@ while run:
         else:
             boss_fireballs.remove(boss_fireball)
     
-    #---------- minion colliosion damage to hero------------------------
-    playsound = True
-    if hero.hitbox[1] < dragon.hitbox[1] + dragon.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > dragon.hitbox[1]:
-        if hero.hitbox[0] + hero.hitbox[2] > dragon.hitbox[0] and hero.hitbox[0] < dragon.hitbox[0] + dragon.hitbox[2]:
-            hero.hit(.05)
-            if playsound:
-                pygame.mixer.Sound.play(gothit)
-                playsound = False
-    playsound = True
-    if hero.hitbox[1] < strongbad.hitbox[1] + strongbad.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > strongbad.hitbox[1]:
-        if hero.hitbox[0] + hero.hitbox[2] > strongbad.hitbox[0] and hero.hitbox[0] < strongbad.hitbox[0] + strongbad.hitbox[2]:
-            hero.hit(.05)
-            if playsound:
-                pygame.mixer.Sound.play(gothit)
-                playsound = False
-
-    keys = pygame.key.get_pressed()
     
     # ---fireball action key----
     
+
+    # if hero.hitbox[1] < boss.hitbox[1] + boss.hitbox[3] and hero.hitbox[1] - 5 + hero.hitbox[3] > boss.hitbox[1]:
+    #     if hero.hitbox[0] + hero.hitbox[2] > boss.hitbox[0] and hero.hitbox[0] < boss.hitbox[0] + boss.hitbox[2]:
+    #         hero.hit(.5)
+    if hero.hitbox[1] < dragon.hitbox[1] + dragon.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > dragon.hitbox[1]:
+        if hero.hitbox[0] + hero.hitbox[2] > dragon.hitbox[0] and hero.hitbox[0] < dragon.hitbox[0] + dragon.hitbox[2]:
+            hero.hit(.5)
+            pygame.mixer.Sound.play(gothit)
+    if hero.hitbox[1] < strongbad.hitbox[1] + strongbad.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > strongbad.hitbox[1]:
+        if hero.hitbox[0] + hero.hitbox[2] > strongbad.hitbox[0] and hero.hitbox[0] < strongbad.hitbox[0] + strongbad.hitbox[2]:
+            hero.hit(.5)
+            pygame.mixer.Sound.play(gothit)
+
+    keys = pygame.key.get_pressed()
+    
+    
+    #----------- Dash Skill--------------
+    if not_pressed:
+        if keys[pygame.K_w]:
+            if hero.left and hero.x -50 > 0 :
+                hero.x -= 50
+                not_pressed = False
+            if hero.right and hero.x + 50 < 500  - hero.width:
+                hero.x += 50
+                not_pressed = False
+            if hero.up and hero.y - 50 > 100:
+                hero.y -= 50
+                not_pressed = False
+            if hero.down and hero.y + 50 < 600 - hero.height - hero.vel:
+                hero.y += 50
+                not_pressed = False
+
+    # ---fireball action key----
     if keys[pygame.K_SPACE] and fireballCoolDown == 0:
         hero.magicAttack = True
         if hero.left:
@@ -508,13 +528,15 @@ while run:
         j = 0
     j += 1 
 # -----end of boss movement loop-----
-
+    if counter == FRAMERATE *.5:
+        counter = 0
+        not_pressed = True
     #---rerender screen after game operations---
     redrawGameWindow()
     if boss.visible == False:
-        win_cond = True
+        win_cond == True
     if hero.visible == False:
-        lose_cond = True
+        lose_cond == True
 
             
 pygame.quit()
