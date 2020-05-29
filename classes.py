@@ -63,100 +63,105 @@ class Player(object):
         self.visible = True
         self.mana = 50
         self.no_mana = False
-    
-    def draw(self, win):
-        if self.walkCount + 1 >= 9:
-            self.walkCount = 0
-        
-        if self.equip == True and self.swordAttack == False:
-            if self.left:
-                win.blit(heroImg['swordLeft'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-                
-            elif self.right:
-                win.blit(heroImg['swordRight'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-                
-            elif self.up:
-                win.blit(heroImg['swordUp'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-                
-            elif self.down:
-                win.blit(heroImg['swordDown'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-        
-        if not(self.standing) and self.equip == False and self.swordAttack == False and self.magicAttack == False:
-            if self.left:
-                win.blit(heroImg['walkLeft'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-                
-            if self.right:
-                win.blit(heroImg['walkRight'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-                
-            if self.up:
-                win.blit(heroImg['walkUp'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-                
-            if self.down:
-                win.blit(heroImg['walkDown'][self.walkCount//3], (self.x,self.y))
-                self.walkCount += 1
-                
-        if self.standing and self.equip == False and self.swordAttack == False and self.magicAttack == False:
-            if self.left:
-                win.blit(heroImg['walkLeft'][0], (self.x,self.y))
-            elif self.right:
-                win.blit(heroImg['walkRight'][0], (self.x,self.y))
-            elif self.up:
-                win.blit(heroImg['walkUp'][0], (self.x,self.y))
-            else: 
-                self.down
-                win.blit(char, (self.x,self.y))
-        
-        if self.swordSlashCount + 1 >= 6:
-            self.swordSlashCount = 0
-
-        if self.swordAttack == True:
-            if self.left:
-                win.blit(heroImg['swordAttackLeft'][self.swordSlashCount//3], (self.x, self.y))
-                self.swordSlashCount += 1
-            elif self.right:
-                win.blit(heroImg['swordAttackRight'][self.swordSlashCount//3], (self.x, self.y))
-                self.swordSlashCount += 1
-            elif self.up:
-                win.blit(heroImg['swordAttackUp'][self.swordSlashCount//3], (self.x, self.y))
-                self.swordSlashCount += 1
-            elif self.down:
-                win.blit(heroImg['swordAttackDown'][self.swordSlashCount//3], (self.x, self.y))
-                self.swordSlashCount += 1
-            
-        if self. magicAttack == True and self.swordAttack == False:
-            if self.left:
-                win.blit(heroImg['magicAttackLeft'], (self.x, self.y))
-            if self.right:
-                win.blit(heroImg['magicAttackRight'], (self.x, self.y))
-            if self.up:
-                win.blit(heroImg['magicAttackUp'], (self.x, self.y))
-            if self.down:
-                win.blit(heroImg['magicAttackDown'], (self.x, self.y))
-        
-        
-        
-        # mana
-        pygame.draw.rect(win, (255, 165, 0),(self.hitbox[0]-15, self.hitbox[1] - 15, 50, 5))
-        pygame.draw.rect(win, (0, 0, 255), (self.hitbox[0]-15, self.hitbox[1] - 15, 50-(50-self.mana), 5))
-
-        # health
-        pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0]-15, self.hitbox[1] - 10, 50, 5))
-        pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0]-15, self.hitbox[1] - 10, 50 - ((50/10) * (50-self.health)), 5))
-        self.hitbox = (self.x, self.y, 20, 25)
-        pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
+        self.fireball_dam = 2
         
     def hit(self, attack_dam):
         if self.health > 0:
             self.health -= attack_dam
+            print(self.health)
         elif self.health <=0:
-            self.visible = False         
+            self.visible = False
+            print(self.visible)
+
+    def draw(self, win):
+        if self.visible == True:
+            if self.walkCount + 1 >= 9:
+                self.walkCount = 0
+            
+            if self.equip == True and self.swordAttack == False:
+                if self.left:
+                    win.blit(heroImg['swordLeft'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+                    
+                elif self.right:
+                    win.blit(heroImg['swordRight'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+                    
+                elif self.up:
+                    win.blit(heroImg['swordUp'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+                    
+                elif self.down:
+                    win.blit(heroImg['swordDown'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+            
+            if not(self.standing) and self.equip == False and self.swordAttack == False and self.magicAttack == False:
+                if self.left:
+                    win.blit(heroImg['walkLeft'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+                    
+                if self.right:
+                    win.blit(heroImg['walkRight'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+                    
+                if self.up:
+                    win.blit(heroImg['walkUp'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+                    
+                if self.down:
+                    win.blit(heroImg['walkDown'][self.walkCount//3], (self.x,self.y))
+                    self.walkCount += 1
+                    
+            if self.standing and self.equip == False and self.swordAttack == False and self.magicAttack == False:
+                if self.left:
+                    win.blit(heroImg['walkLeft'][0], (self.x,self.y))
+                elif self.right:
+                    win.blit(heroImg['walkRight'][0], (self.x,self.y))
+                elif self.up:
+                    win.blit(heroImg['walkUp'][0], (self.x,self.y))
+                else: 
+                    self.down
+                    win.blit(char, (self.x,self.y))
+            
+            if self.swordSlashCount + 1 >= 6:
+                self.swordSlashCount = 0
+
+            if self.swordAttack == True:
+                if self.left:
+                    win.blit(heroImg['swordAttackLeft'][self.swordSlashCount//3], (self.x, self.y))
+                    self.swordSlashCount += 1
+                elif self.right:
+                    win.blit(heroImg['swordAttackRight'][self.swordSlashCount//3], (self.x, self.y))
+                    self.swordSlashCount += 1
+                elif self.up:
+                    win.blit(heroImg['swordAttackUp'][self.swordSlashCount//3], (self.x, self.y))
+                    self.swordSlashCount += 1
+                elif self.down:
+                    win.blit(heroImg['swordAttackDown'][self.swordSlashCount//3], (self.x, self.y))
+                    self.swordSlashCount += 1
+                
+            if self. magicAttack == True and self.swordAttack == False:
+                if self.left:
+                    win.blit(heroImg['magicAttackLeft'], (self.x, self.y))
+                if self.right:
+                    win.blit(heroImg['magicAttackRight'], (self.x, self.y))
+                if self.up:
+                    win.blit(heroImg['magicAttackUp'], (self.x, self.y))
+                if self.down:
+                    win.blit(heroImg['magicAttackDown'], (self.x, self.y))
+                        
+            
+            
+            # mana
+            pygame.draw.rect(win, (255, 165, 0),(self.hitbox[0]-15, self.hitbox[1] - 15, 50, 5))
+            pygame.draw.rect(win, (0, 0, 255), (self.hitbox[0]-15, self.hitbox[1] - 15, 50-(50-self.mana), 5))
+
+            # health
+            pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0]-15, self.hitbox[1] - 10, 50, 5))
+            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0]-15, self.hitbox[1] - 10, 50 -(50-self.health), 5))
+            self.hitbox = (self.x, self.y, 20, 25)
+            pygame.draw.rect(win, (255, 0, 0), self.hitbox, 2)
+        
 
 # ----end of player class-----
 
@@ -179,6 +184,7 @@ class Boss(object):
         self.hitbox = (self.x+1, self.y, 37, 49)
         self.health = 50
         self.visible = True
+        self.fireball_dam = 4
     
     def hit(self, attack_dam):
         if self.health > 0:
@@ -216,8 +222,8 @@ class Boss(object):
                     self.down
                     win.blit(georgestanding['stddown'], (self.x,self.y))
                     
-            pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0], self.hitbox[1]-20, 50, 10))
-            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0], self.hitbox[1]-20, 50 - ((50-self.health)), 10))
+            pygame.draw.rect(win, (255, 0, 0),(self.hitbox[0]-5, self.hitbox[1]-10, 50, 5))
+            pygame.draw.rect(win, (0, 255, 0), (self.hitbox[0]-5, self.hitbox[1]-10, 50 - ((50-self.health)), 5))
 
             self.hitbox = (self.x+1, self.y, 37, 49)
             pygame.draw.rect(win, (255,0,0), self.hitbox,2)
