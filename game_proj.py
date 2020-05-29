@@ -4,13 +4,20 @@ from classes import Player, Boss, Projectile, Tree, BossMinion, Castle, Dragon
 pygame.init()
 
 # -----Sounds files imported----
+pygame.mixer.music.set_volume(.25)
+pygame.mixer.music.load('music/trogdor_short.mp3')
+pygame.mixer.music.play(-1)
 
-# pygame.mixer.music.load('music/trogdor_short.mp3')
-# pygame.mixer.music.play(-1)
 fireball_sound = pygame.mixer.Sound('music/Fireball.wav')
 fireball_sound.set_volume(.05)
+gothit = pygame.mixer.Sound('music/gothit.wav')
+gothit.set_volume(.1)
+freezeball_sound = pygame.mixer.Sound('music/freeze.wav')
+freezeball_sound.set_volume(.05)
 sword_swing = pygame.mixer.Sound('music/sword_swing.wav')
 sword_hit = pygame.mixer.Sound('music/sword_hit.wav')
+freeze_hit = pygame.mixer.Sound('music/ice_break.wav')
+freeze_hit.set_volume(.05)
 
 
 
@@ -69,12 +76,6 @@ def redrawGameWindow():
     
     pygame.display.flip()
 
-# inpath1 = boss.hitbox[1]+boss.hitbox[3] > hero.hitbox[1] 
-# inpath2 = hero.hitbox[1] + hero.hitbox[3] >= boss.hitbox[1]
-#     # inpath = True
-# # else:
-# #     inpath = False
-# left = boss.hitbox[0]+boss.hitbox[2] >= hero.hitbox[0]
 def check_for_boss(face_boss, boss_box_perp1, boss_box_perp2):
     if face_boss and boss_box_perp1 and boss_box_perp2 == True:
         return True
@@ -118,11 +119,11 @@ while run:
     
     #-----y tree ranges-------
     x_inpath1_tree_1 = tree_1.hitbox[1] + tree_1.hitbox[3] > hero.hitbox[1]
-    x_inpath2_tree_2 = hero.hitbox[1] + hero.hitbox[3] > tree_1.hitbox[1]
+    x_inpath2_tree_1 = hero.hitbox[1] + hero.hitbox[3] > tree_1.hitbox[1]
     
     #------x tree hitbox ranges-----
     y_inpath1_tree_1 = tree_1.hitbox[0]+tree_1.hitbox[2] > hero.hitbox[0]
-    y_inpath2_tree_2 = hero.hitbox[2] + hero.hitbox[0] > tree_1.hitbox[0]
+    y_inpath2_tree_1 = hero.hitbox[2] + hero.hitbox[0] > tree_1.hitbox[0]
     
     #----direction tree up collision----
     tree_1_up = tree_1.hitbox[1] + tree_1.hitbox[3] + hero.vel*2 > hero.hitbox[1]
@@ -135,6 +136,25 @@ while run:
     #----direction tree left collision----
     tree_1_left = tree_1.hitbox[0] + tree_1.hitbox[2] > hero.hitbox[0] -hero.vel
     tree_1_past_left = hero.hitbox[0] + hero.hitbox[2] -hero.vel < tree_1.hitbox[0]
+    
+    #-----y tree ranges-------
+    x_inpath1_tree_2 = tree_2.hitbox[1] + tree_2.hitbox[3] > hero.hitbox[1]
+    x_inpath2_tree_2 = hero.hitbox[1] + hero.hitbox[3] > tree_2.hitbox[1]
+    
+    #------x tree hitbox ranges-----
+    y_inpath1_tree_2 = tree_2.hitbox[0]+tree_2.hitbox[2] > hero.hitbox[0]
+    y_inpath2_tree_2 = hero.hitbox[2] + hero.hitbox[0] > tree_2.hitbox[0]
+    
+    tree_2_up = tree_2.hitbox[1] + tree_2.hitbox[3] + hero.vel*2 > hero.hitbox[1]
+    tree_2_past_down = hero.hitbox[1] + hero.hitbox[3] < tree_2.hitbox[1] 
+    
+    #----direction tree down collision----
+    tree_2_past_up = tree_2.hitbox[1] + tree_2.hitbox[3] < hero.hitbox[1] - hero.vel
+    tree_2_down = hero.hitbox[1] + hero.hitbox[3] + hero.vel*2 > tree_2.hitbox[1] 
+    
+    #----direction tree left collision----
+    tree_2_right = hero.hitbox[0] + hero.hitbox[2] + hero.vel > tree_2.hitbox[0]
+    tree_2_past_right = tree_2.hitbox[0] + tree_2.hitbox[2] < hero.hitbox[0] +hero.vel
 
 
     #-----hero fireball firerate limit -----
@@ -157,15 +177,18 @@ while run:
                 if fireball.x + fireball.radius > boss.hitbox[0] and fireball.x - fireball.radius < boss.hitbox[0] + boss.hitbox[2]:
                     if strongbad.visible == False and dragon.visible == False:
                         boss.hit(fireball.damage)
+                        pygame.mixer.Sound.play(freeze_hit)
                         fireballs.pop(fireballs.index(fireball))
 
             elif fireball.y + fireball.radius > strongbad.hitbox[1] and fireball.y - fireball.radius < strongbad.hitbox[1] + strongbad.hitbox[3]:
                 if fireball.x + fireball.radius > strongbad.hitbox[0] and fireball.x - fireball.radius < strongbad.hitbox[0] + strongbad.hitbox[2]:
                     strongbad.hit(fireball.damage)
+                    pygame.mixer.Sound.play(freeze_hit)
                     fireballs.pop(fireballs.index(fireball))
             elif fireball.y + fireball.radius > dragon.hitbox[1] and fireball.y - fireball.radius < dragon.hitbox[1] + dragon.hitbox[3]:
                 if fireball.x + fireball.radius > dragon.hitbox[0] and fireball.x - fireball.radius < dragon.hitbox[0] + dragon.hitbox[2]:
                     dragon.hit(fireball.damage)
+                    pygame.mixer.Sound.play(freeze_hit)
                     fireballs.pop(fireballs.index(fireball))
 
             if fireball.x < 500 and fireball.x > 0 and fireball.y < 600 and fireball.y > 100:
@@ -179,6 +202,7 @@ while run:
         if boss_fireball.y + boss_fireball.radius > hero.hitbox[1] and boss_fireball.y - boss_fireball.radius < hero.hitbox[1] + boss.hitbox[3]:
                 if boss_fireball.x + boss_fireball.radius > hero.hitbox[0] and boss_fireball.x - boss_fireball.radius < hero.hitbox[0] + boss.hitbox[2]:
                     hero.hit(boss.fireball_dam)
+                    pygame.mixer.Sound.play(gothit)
                     boss_fireballs.pop(boss_fireballs.index(boss_fireball))
                     
         if boss_fireball.x < 500 and boss_fireball.x > 0 and boss_fireball.y < 600 and boss_fireball.y > 100:
@@ -187,13 +211,20 @@ while run:
             boss_fireballs.remove(boss_fireball)
     
     #---------- minion colliosion damage to hero------------------------
-
+    playsound = True
     if hero.hitbox[1] < dragon.hitbox[1] + dragon.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > dragon.hitbox[1]:
         if hero.hitbox[0] + hero.hitbox[2] > dragon.hitbox[0] and hero.hitbox[0] < dragon.hitbox[0] + dragon.hitbox[2]:
             hero.hit(.05)
+            if playsound:
+                pygame.mixer.Sound.play(gothit)
+                playsound = False
+    playsound = True
     if hero.hitbox[1] < strongbad.hitbox[1] + strongbad.hitbox[3] and hero.hitbox[1] + hero.hitbox[3] > strongbad.hitbox[1]:
         if hero.hitbox[0] + hero.hitbox[2] > strongbad.hitbox[0] and hero.hitbox[0] < strongbad.hitbox[0] + strongbad.hitbox[2]:
             hero.hit(.05)
+            if playsound:
+                pygame.mixer.Sound.play(gothit)
+                playsound = False
 
     keys = pygame.key.get_pressed()
     
@@ -213,7 +244,7 @@ while run:
         if hero.mana >= 4 and hero.no_mana == False:
             if len(fireballs) < 10 and hero.equip == False:
                 hero.mana -= 4
-                pygame.mixer.Sound.play(fireball_sound)
+                pygame.mixer.Sound.play(freezeball_sound)
                 fireballs.append(Projectile(round(hero.x + hero.width // 2), round(hero.y + hero.height // 2), (52, 232, 235), 5, direction))
                 fireballCoolDown = 1
         else:
@@ -224,7 +255,7 @@ while run:
         hero.magicAttack = False
         
     while mana_regen == 20 and hero.mana <= 50:
-        hero.mana += 2 
+        hero.mana += 4 
         mana_regen += 1
     if mana_regen > 20:
         mana_regen = 0
@@ -250,7 +281,10 @@ while run:
         if boss.visible == True:
             boss_blocked = check_for_boss(left, x_inpath1, x_inpath2)
             boss_pass = check_if_past(past_left)
+            # tree1_blocked = check_for_boss(tree_1_left, x_inpath1_tree_1, x_inpath2_tree_1)
+            # tree1_pass = check_if_past(tree_1_past_left)
             if boss_blocked == False:
+            # elif boss_pass == True and tree2_blocked == False:
                 hero.x -= hero.vel
                 hero.left = True
                 hero.right = False
@@ -258,6 +292,7 @@ while run:
                 hero.down = False
                 hero.standing = False
             elif boss_pass == True:
+            # elif boss_pass == True and tree2_blocked == False:
                 hero.x -= hero.vel
                 hero.left = True
                 hero.right = False
@@ -285,7 +320,10 @@ while run:
         if boss.visible == True:
             boss_blocked = check_for_boss(right, x_inpath1, x_inpath2)
             boss_pass = check_if_past(past_right)
+            # tree2_blocked = check_for_boss(tree_2_right, x_inpath1_tree_2, x_inpath2_tree_2)
+            # tree2_pass = check_if_past(tree_2_past_right)
             if boss_blocked == False:
+            # elif boss_pass == True and tree2_blocked == False:
                 hero.x += hero.vel
                 hero.left = False
                 hero.right = True
@@ -293,6 +331,7 @@ while run:
                 hero.down = False
                 hero.standing = False
             elif boss_pass == True:
+            # elif boss_pass == True and tree2_blocked == False:
                 hero.x += hero.vel
                 hero.left = False
                 hero.right = True
@@ -317,7 +356,12 @@ while run:
         if boss.visible == True:
             boss_blocked = check_for_boss(up, y_inpath1, y_inpath2)
             boss_pass = check_if_past(past_down)
+            # tree1_blocked = check_for_boss(tree_1_up, y_inpath1_tree_1, y_inpath2_tree_1)
+            # tree1_pass = check_if_past(tree_1_past_up)
+            # tree2_blocked = check_for_boss(tree_2_up, y_inpath1_tree_2, y_inpath2_tree_2)
+            # tree2_pass = check_if_past(tree_2_past_down)
             if boss_blocked == False:
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
                 hero.y -= hero.vel
                 hero.left = False
                 hero.right = False
@@ -325,6 +369,7 @@ while run:
                 hero.down = False
                 hero.standing = False
             elif boss_pass == True:
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
                 hero.y -= hero.vel
                 hero.left = False
                 hero.right = False
@@ -350,15 +395,19 @@ while run:
         if boss.visible == True:
             boss_blocked = check_for_boss(down, y_inpath1, y_inpath2)
             boss_pass = check_if_past(past_up)
-            # tree_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
-            # tree_pass = check_if_past(tree_1_past_up)
+            # tree1_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
+            # tree1_pass = check_if_past(tree_1_past_down)
+            # tree2_blocked = check_for_boss(tree_2_down, y_inpath1_tree_2, y_inpath2_tree_2)
+            # tree2_pass = check_if_past(tree_2_past_up)
             if boss_blocked == False:
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
                 hero.y += hero.vel
                 hero.left = False
                 hero.right = False
                 hero.up = False
                 hero.down = True
                 hero.standing = False
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
             elif boss_pass == True:
                 hero.y += hero.vel
                 hero.left = False
@@ -451,8 +500,8 @@ while run:
             if boss.down:
                 boss_direction = 'down'
             if len(boss_fireballs) < 100:
-                # pygame.mixer.Sound.play(fireball_sound)
-                boss_fireballs.append(Projectile(round(boss.x + boss.width //2), round(boss.y + boss.height //2), (255,0,0), 20, boss_direction))
+                pygame.mixer.Sound.play(fireball_sound)
+                boss_fireballs.append(Projectile(round(boss.x + boss.width //2), round(boss.y + boss.height //2+10), (255,0,0), 12, boss_direction))
             j += 1
         
     if j > 60:

@@ -1,6 +1,11 @@
 import pygame 
 import random
 
+pygame.mixer.init()
+gothit = pygame.mixer.Sound('music/gothit.wav')
+gothit.set_volume(.1)
+
+
 heroImg = {
     'walkRight' : [pygame.image.load('hero/hero_right.png'), pygame.image.load('hero/hero_right_walk1.png'), pygame.image.load('hero/hero_right_walk2.png')],
     'walkLeft' : [pygame.image.load('hero/hero_left.png'), pygame.image.load('hero/hero_left_walk1.png'), pygame.image.load('hero/hero_left_walk2.png')],
@@ -68,10 +73,9 @@ class Player(object):
     def hit(self, attack_dam):
         if self.health > 0:
             self.health -= attack_dam
-            print(self.health)
+            # pygame.mixer.Sound.play(gothit)
         elif self.health <=0:
             self.visible = False
-            print(self.visible)
 
     def draw(self, win):
         if self.visible == True:
@@ -374,4 +378,4 @@ class Dragon(object):
             else:
                 self.vel = self.vel *-1
                 self.walkCount = 0
-        
+
