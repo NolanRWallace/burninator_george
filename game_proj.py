@@ -314,17 +314,18 @@ def main():
         for fireball in fireballs:
                 if fireball.y + fireball.radius > boss.hitbox[1] and fireball.y - fireball.radius < boss.hitbox[1] + boss.hitbox[3]:
                     if fireball.x + fireball.radius > boss.hitbox[0] and fireball.x - fireball.radius < boss.hitbox[0] + boss.hitbox[2]:
+                        fireballs.pop(fireballs.index(fireball))
                         if strongbad.visible == False and dragon.visible == False:
                             boss.hit(fireball.damage)
                             pygame.mixer.Sound.play(freeze_hit)
-                            fireballs.pop(fireballs.index(fireball))
+                            
 
-                elif fireball.y + fireball.radius > strongbad.hitbox[1] and fireball.y - fireball.radius < strongbad.hitbox[1] + strongbad.hitbox[3]:
+                if fireball.y + fireball.radius > strongbad.hitbox[1] and fireball.y - fireball.radius < strongbad.hitbox[1] + strongbad.hitbox[3]:
                     if fireball.x + fireball.radius > strongbad.hitbox[0] and fireball.x - fireball.radius < strongbad.hitbox[0] + strongbad.hitbox[2]:
                         strongbad.hit(fireball.damage)
                         pygame.mixer.Sound.play(freeze_hit)
                         fireballs.pop(fireballs.index(fireball))
-                elif fireball.y + fireball.radius > dragon.hitbox[1] and fireball.y - fireball.radius < dragon.hitbox[1] + dragon.hitbox[3]:
+                if fireball.y + fireball.radius > dragon.hitbox[1] and fireball.y - fireball.radius < dragon.hitbox[1] + dragon.hitbox[3]:
                     if fireball.x + fireball.radius > dragon.hitbox[0] and fireball.x - fireball.radius < dragon.hitbox[0] + dragon.hitbox[2]:
                         dragon.hit(fireball.damage)
                         pygame.mixer.Sound.play(freeze_hit)
