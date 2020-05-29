@@ -66,7 +66,8 @@ def redrawGameWindow():
     win.blit(bg, (0,100)) 
     win.blit(mountain, (0,0))
     hero.draw(win)
-    boss.draw(win)
+    if boss.visible == True:
+        boss.draw(win)
     tree_2.draw(win)
     tree_1.draw(win)
     strongbad.draw(win)
@@ -127,19 +128,20 @@ def main_menu():
 
         start_button = pygame.Rect(100, 450, 100, 50)
         quit_button = pygame.Rect (250, 450, 100, 50)
-        if start_button.collidepoint(mouse):
-            if click:
-                return True
-        if quit_button.collidepoint(mouse):
-            if click:
-                pygame.quit()
+        
         
         pygame.draw.rect(win, (0,255,0), start_button)
         draw_text('Start', font, (255,255,255), win, 110, 455)
         
         pygame.draw.rect(win, (255,0,0), quit_button)
         draw_text('Quit', font, (255,255,255), win, 260, 455)
-        
+        pygame.display.update()
+        if start_button.collidepoint(mouse):
+            if click:
+                return True
+        if quit_button.collidepoint(mouse):
+            if click:
+                pygame.quit()
         click = False
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -149,11 +151,12 @@ def main_menu():
                 if event.button == 1:
                     click = True
 
-        pygame.display.update()
+        
         clock.tick(FRAMERATE)
 
 
 main_menu()
+
 
 #----game operations loop -----
 # def game():
@@ -369,152 +372,156 @@ while run:
     #-----character movement-----
     
     if keys[pygame.K_LEFT] and hero.x > 0 :
-        boss_blocked = check_for_boss(left, x_inpath1, x_inpath2)
-        boss_pass = check_if_past(past_left)
-        # tree1_blocked = check_for_boss(tree_1_left, x_inpath1_tree_1, x_inpath2_tree_1)
-        # tree1_pass = check_if_past(tree_1_past_left)
-        if boss_blocked == False:
-        # if boss_blocked == False and tree1_blocked == False and tree1_pass == False:
-            hero.x -= hero.vel
-            hero.left = True
-            hero.right = False
-            hero.up = False
-            hero.down = False
-            hero.standing = False
-        elif boss_pass == True:
-        # if boss_pass == True and tree1_blocked == False :
-            hero.x -= hero.vel
-            hero.left = True
-            hero.right = False
-            hero.up = False
-            hero.down = False
-            hero.standing = False
+        if boss.visible == True:
+            boss_blocked = check_for_boss(left, x_inpath1, x_inpath2)
+            boss_pass = check_if_past(past_left)
+            # tree1_blocked = check_for_boss(tree_1_left, x_inpath1_tree_1, x_inpath2_tree_1)
+            # tree1_pass = check_if_past(tree_1_past_left)
+            if boss_blocked == False:
+            # if boss_blocked == False and tree1_blocked == False and tree1_pass == False:
+                hero.x -= hero.vel
+                hero.left = True
+                hero.right = False
+                hero.up = False
+                hero.down = False
+                hero.standing = False
+            elif boss_pass == True:
+            # if boss_pass == True and tree1_blocked == False :
+                hero.x -= hero.vel
+                hero.left = True
+                hero.right = False
+                hero.up = False
+                hero.down = False
+                hero.standing = False
+            else:
+                hero.left = True
+                hero.right = False
+                hero.up = False
+                hero.down = False
+                hero.standing = False
         else:
+            hero.x -= hero.vel
             hero.left = True
             hero.right = False
             hero.up = False
             hero.down = False
             hero.standing = False
-    # else:
-    #     hero.x -= hero.vel
-    #     hero.left = True
-    #     hero.right = False
-    #     hero.up = False
-    #     hero.down = False
-    #     hero.standing = False
-        
+            
     #-----character movement-----
 
 
     elif keys[pygame.K_RIGHT] and hero.x < 500  -hero.width:
-        boss_blocked = check_for_boss(right, x_inpath1, x_inpath2)
-        boss_pass = check_if_past(past_right)
-        # tree2_blocked = check_for_boss(tree_2_right, x_inpath1_tree_2, x_inpath2_tree_2)
-        # tree2_pass = check_if_past(tree_2_past_right)
-        if boss_blocked == False:
-        # if boss_blocked == False and tree2_blocked == False and tree2_pass == False:
-            hero.x += hero.vel
-            hero.left = False
-            hero.right = True
-            hero.up = False
-            hero.down = False
-            hero.standing = False
-        elif boss_pass == True:
-        # if boss_pass == True and tree2_blocked == False :
-            hero.x += hero.vel
-            hero.left = False
-            hero.right = True
-            hero.up = False
-            hero.down = False
-            hero.standing = False
+        if boss.visible == True:
+            boss_blocked = check_for_boss(right, x_inpath1, x_inpath2)
+            boss_pass = check_if_past(past_right)
+            # tree2_blocked = check_for_boss(tree_2_right, x_inpath1_tree_2, x_inpath2_tree_2)
+            # tree2_pass = check_if_past(tree_2_past_right)
+            if boss_blocked == False:
+            # if boss_blocked == False and tree2_blocked == False and tree2_pass == False:
+                hero.x += hero.vel
+                hero.left = False
+                hero.right = True
+                hero.up = False
+                hero.down = False
+                hero.standing = False
+            elif boss_pass == True:
+            # if boss_pass == True and tree2_blocked == False :
+                hero.x += hero.vel
+                hero.left = False
+                hero.right = True
+                hero.up = False
+                hero.down = False
+                hero.standing = False
+            else:
+                hero.left = False
+                hero.right = True
+                hero.up = False
+                hero.down = False
+                hero.standing = False
         else:
+            hero.x += hero.vel
             hero.left = False
             hero.right = True
             hero.up = False
             hero.down = False
             hero.standing = False
-    # else:
-    #     hero.x += hero.vel
-    #     hero.left = False
-    #     hero.right = True
-    #     hero.up = False
-    #     hero.down = False
-    #     hero.standing = False
-        
+            
     elif keys[pygame.K_UP] and hero.y > 100:
-        boss_blocked = check_for_boss(up, y_inpath1, y_inpath2)
-        boss_pass = check_if_past(past_down)
-        # tree1_blocked = check_for_boss(tree_1_up, y_inpath1_tree_1, y_inpath2_tree_1)
-        # tree1_pass = check_if_past(tree_1_past_up)
-        # tree2_blocked = check_for_boss(tree_2_up, y_inpath1_tree_2, y_inpath2_tree_2)
-        # tree2_pass = check_if_past(tree_2_past_down)
-        if boss_blocked == False:
-        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-            hero.y -= hero.vel
-            hero.left = False
-            hero.right = False
-            hero.up = True
-            hero.down = False
-            hero.standing = False
-        elif boss_pass == True:
-        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-            hero.y -= hero.vel
-            hero.left = False
-            hero.right = False
-            hero.up = True
-            hero.down = False
-            hero.standing = False
+        if boss.visible == True:
+            boss_blocked = check_for_boss(up, y_inpath1, y_inpath2)
+            boss_pass = check_if_past(past_down)
+            # tree1_blocked = check_for_boss(tree_1_up, y_inpath1_tree_1, y_inpath2_tree_1)
+            # tree1_pass = check_if_past(tree_1_past_up)
+            # tree2_blocked = check_for_boss(tree_2_up, y_inpath1_tree_2, y_inpath2_tree_2)
+            # tree2_pass = check_if_past(tree_2_past_down)
+            if boss_blocked == False:
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
+                hero.y -= hero.vel
+                hero.left = False
+                hero.right = False
+                hero.up = True
+                hero.down = False
+                hero.standing = False
+            elif boss_pass == True:
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
+                hero.y -= hero.vel
+                hero.left = False
+                hero.right = False
+                hero.up = True
+                hero.down = False
+                hero.standing = False
+            else:
+                hero.left = False
+                hero.right = False
+                hero.up = True
+                hero.down = False
+                hero.standing = False
         else:
+            hero.y -= hero.vel
             hero.left = False
             hero.right = False
             hero.up = True
             hero.down = False
             hero.standing = False
-    # else:
-    #     hero.y -= hero.vel
-    #     hero.left = False
-    #     hero.right = False
-    #     hero.up = True
-    #     hero.down = False
-    #     hero.standing = False
 
 
     elif keys[pygame.K_DOWN] and hero.y < 600 - hero.height - hero.vel:
-        boss_blocked = check_for_boss(down, y_inpath1, y_inpath2)
-        boss_pass = check_if_past(past_up)
-        # tree1_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
-        # tree1_pass = check_if_past(tree_1_past_down)
-        # tree2_blocked = check_for_boss(tree_2_down, y_inpath1_tree_2, y_inpath2_tree_2)
-        # tree2_pass = check_if_past(tree_2_past_up)
-        if boss_blocked == False:
-        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-            hero.y += hero.vel
-            hero.left = False
-            hero.right = False
-            hero.up = False
-            hero.down = True
-            hero.standing = False
-        # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
-        elif boss_pass == True:
-            hero.y += hero.vel
-            hero.left = False
-            hero.right = False
-            hero.up = False
-            hero.down = True
-            hero.standing = False
+        if boss.visible == True:
+            boss_blocked = check_for_boss(down, y_inpath1, y_inpath2)
+            boss_pass = check_if_past(past_up)
+            # tree1_blocked = check_for_boss(tree_1_down, y_inpath1_tree_1, y_inpath2_tree_1)
+            # tree1_pass = check_if_past(tree_1_past_down)
+            # tree2_blocked = check_for_boss(tree_2_down, y_inpath1_tree_2, y_inpath2_tree_2)
+            # tree2_pass = check_if_past(tree_2_past_up)
+            if boss_blocked == False:
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
+                hero.y += hero.vel
+                hero.left = False
+                hero.right = False
+                hero.up = False
+                hero.down = True
+                hero.standing = False
+            # elif boss_pass == True and tree1_blocked == False and tree2_blocked == False :
+            elif boss_pass == True:
+                hero.y += hero.vel
+                hero.left = False
+                hero.right = False
+                hero.up = False
+                hero.down = True
+                hero.standing = False
+            else:
+                hero.left = False
+                hero.right = False
+                hero.up = False
+                hero.down = True
+                hero.standing = False
         else:
+            hero.y += hero.vel
             hero.left = False
             hero.right = False
             hero.up = False
             hero.down = True
             hero.standing = False
-    # else:
-    #     hero.y += hero.vel
-    #     hero.left = False
-    #     hero.right = False
-    #     hero.up = False
-    #     hero.down = True
-    #     hero.standing = False
 
 
     else:
